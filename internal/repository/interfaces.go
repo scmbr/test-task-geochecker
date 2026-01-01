@@ -10,7 +10,7 @@ import (
 
 type IncidentRepository interface {
 	Create(ctx context.Context, incident models.Incident) error
-	GetAll(ctx context.Context, offset, limit int) ([]models.Incident, error)
+	GetAll(ctx context.Context, offset, limit int) ([]models.Incident, uint32, error)
 	GetById(ctx context.Context, id string) (*models.Incident, error)
 	Update(ctx context.Context, id string, incident models.Incident) error
 	Delete(ctx context.Context, id string) error
