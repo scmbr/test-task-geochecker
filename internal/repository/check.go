@@ -16,6 +16,9 @@ func NewCheckRepository(db *gorm.DB) *CheckRepo {
 }
 func (r *CheckRepo) Create(ctx context.Context, check models.Check) error {
 	if err := r.db.WithContext(ctx).Create(check).Error; err != nil {
+		if err == gorm.ErrDuplicatedKey {
+			return ErrAlreadyExists
+		}
 		return err
 	}
 	return nil
@@ -24,7 +27,7 @@ func (r *CheckRepo) GetById(ctx context.Context, id string) (*models.Check, erro
 	var check models.Check
 	res := r.db.WithContext(ctx).Where("check_id = ?", id).First(&check)
 	if res.Error == gorm.ErrRecordNotFound {
-		return nil, nil
+		return nil, ErrNotFound
 	}
 	if res.Error != nil {
 		return nil, res.Error
