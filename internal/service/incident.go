@@ -1,0 +1,101 @@
+package service
+
+import (
+	"context"
+	"errors"
+	"time"
+
+	"github.com/google/uuid"
+	"github.com/scmbr/test-task-geochecker/internal/domain/models"
+	"github.com/scmbr/test-task-geochecker/internal/repository"
+	"github.com/scmbr/test-task-geochecker/internal/service/dto"
+)
+
+type IncidentSvc struct {
+	incidentRepo repository.IncidentRepository
+}
+
+func NewIncidentService(incidentRepo repository.IncidentRepository) *IncidentSvc {
+	return &IncidentSvc{incidentRepo: incidentRepo}
+}
+func (s *IncidentSvc) Create(ctx context.Context, input *dto.CreateIncidentInput) error {
+	err := s.incidentRepo.Create(ctx, models.Incident{
+		IncidentID: uuid.NewString(),
+		OperatorID: input.OperatorID,
+		Longitude:  input.Longitude,
+		Latitude:   input.Latitude,
+		Radius:     uint8(input.Radius),
+	})
+	if err != nil {
+		if errors.Is(err, repository.ErrAlreadyExists) {
+			return ErrIncidentAlreadyExists
+		}
+	}
+	return nil
+}
+func (s *IncidentSvc) GetAll(ctx context.Context, offset, limit int) (*dto.GetAllIncidentOutput, error) {
+	res, total, err := s.incidentRepo.GetAll(ctx, offset, limit)
+	if err != nil {
+		return nil, err
+	}
+	incidents := make([]dto.GetIncidentOutput, len(res))
+	for idx, i := range res {
+		incidents[idx] = dto.GetIncidentOutput{
+			ID:         i.IncidentID,
+			OperatorID: i.OperatorID,
+			Latitude:   i.Latitude,
+			Longitude:  i.Longitude,
+			Radius:     i.Radius,
+			CreatedAt:  i.CreatedAt,
+		}
+	}
+	return &dto.GetAllIncidentOutput{
+		Total:     total,
+		Incidents: incidents}, nil
+}
+func (s *IncidentSvc) GetById(ctx context.Context, id string) (*dto.GetIncidentOutput, error) {
+	res, err := s.incidentRepo.GetById(ctx, id)
+	if err != nil {
+		if errors.Is(err, repository.ErrNotFound) {
+			return nil, ErrIncidentNotFound
+		}
+		return nil, err
+	}
+	return &dto.GetIncidentOutput{
+		ID:         res.IncidentID,
+		OperatorID: res.OperatorID,
+		Latitude:   res.Latitude,
+		Longitude:  res.Longitude,
+		Radius:     res.Radius,
+		CreatedAt:  res.CreatedAt,
+	}, nil
+}
+
+func (s *IncidentSvc) Update(ctx context.Context, id string, input *dto.UpdateIncidentInput) error {
+	err := s.incidentRepo.Update(ctx, id, models.Incident{
+		OperatorID: input.OperatorID,
+		Longitude:  input.Longitude,
+		Latitude:   input.Latitude,
+		Radius:     input.Radius,
+	})
+	if err != nil {
+		if errors.Is(err, repository.ErrNotFound) {
+			return ErrIncidentNotFound
+		}
+		return err
+	}
+	return nil
+}
+func (s *IncidentSvc) Delete(ctx context.Context, id string) error {
+	err := s.incidentRepo.Delete(ctx, id)
+	if err != nil {
+		if errors.Is(err, repository.ErrNotFound) {
+			return ErrIncidentNotFound
+		}
+		return err
+	}
+	return nil
+}
+func (s *IncidentSvc) GetStats(ctx context.Context, incidentID string, since time.Time) (int, error) {
+	return s.incidentRepo.CountUniqueUsers(ctx, incidentID, since)
+}
