@@ -20,14 +20,21 @@ type CheckRepository interface {
 	Create(ctx context.Context, check models.Check) error
 	GetById(ctx context.Context, id string) (*models.Check, error)
 }
+type OperatorRepository interface {
+	GetActiveByAPIKeyHash(ctx context.Context, apiKeyHash string) (*models.Operator, error)
+	Create(ctx context.Context, operator models.Operator) error
+	Revoke(ctx context.Context, operatorID string) error
+}
 type Repository struct {
 	Incident IncidentRepository
 	Check    CheckRepository
+	Operator OperatorRepository
 }
 
 func NewRepository(db *gorm.DB) *Repository {
 	return &Repository{
 		Incident: NewIncidentRepository(db),
 		Check:    NewCheckRepository(db),
+		Operator: NewOperatorRepository(db),
 	}
 }
