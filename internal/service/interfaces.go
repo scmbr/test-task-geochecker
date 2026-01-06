@@ -20,14 +20,21 @@ type CheckService interface {
 	Check(ctx context.Context, input *dto.CheckInput) error
 	GetById(ctx context.Context, id string) (*dto.GetCheckOutput, error)
 }
+type OperatorService interface {
+	ValidateAPIKey(ctx context.Context, apiKey string) (*dto.ValidateOperatorOutput, error)
+	Create(ctx context.Context, operator *dto.CreateOperatorInput) error
+	Revoke(ctx context.Context, operatorID string) error
+}
 type Service struct {
 	Incident IncidentService
 	Check    CheckService
+	Operator OperatorService
 }
 
 func NewService(repo *repository.Repository) *Service {
 	return &Service{
 		Incident: NewIncidentService(repo.Incident),
 		Check:    NewCheckService(repo.Check),
+		Operator: NewOperatorService(repo.Operator),
 	}
 }
