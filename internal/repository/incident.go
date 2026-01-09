@@ -50,15 +50,26 @@ func (r *IncidentRepo) GetById(ctx context.Context, id string) (*models.Incident
 	}
 	return &incident, nil
 }
-func (r *IncidentRepo) Update(ctx context.Context, id string, incident models.Incident) error {
-	res := r.db.WithContext(ctx).Where("incident_id = ?", id).
-		Updates(map[string]interface{}{
-			"operator_id": incident.OperatorID,
-			"latitude":    incident.Latitude,
-			"longitude":   incident.Longitude,
-			"radius":      incident.Radius,
-			"updated_at":  time.Now(),
-		})
+func (r *IncidentRepo) Update(ctx context.Context, id string, input models.UpdateIncidentInput) error {
+	updates := map[string]interface{}{
+		"updated_at": time.Now(),
+	}
+
+	if input.OperatorID != nil {
+		updates["operator_id"] = *input.OperatorID
+	}
+	if input.Latitude != nil {
+		updates["latitude"] = *input.Latitude
+	}
+	if input.Longitude != nil {
+		updates["longitude"] = *input.Longitude
+	}
+	if input.Radius != nil {
+		updates["radius"] = *input.Radius
+	}
+
+	res := r.db.WithContext(ctx).Where("incident_id = ?", id).Updates(updates)
+
 	if res.RowsAffected == 0 {
 		return ErrNotFound
 	}
@@ -68,6 +79,7 @@ func (r *IncidentRepo) Update(ctx context.Context, id string, incident models.In
 
 	return nil
 }
+
 func (r *IncidentRepo) Delete(ctx context.Context, id string) error {
 	res := r.db.WithContext(ctx).Where("incident_id = ?", id).Update("deleted_at", time.Now())
 	if res.RowsAffected == 0 {
