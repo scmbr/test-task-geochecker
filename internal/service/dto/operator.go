@@ -8,3 +8,7 @@ type ValidateOperatorOutput struct {
 	CreatedAt  time.Time
 	RevokedAt  *time.Time
 }
+type CreateOperatorInput struct {
+	Name   string
+	APIKey string
+}
