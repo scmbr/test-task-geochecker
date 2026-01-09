@@ -12,3 +12,9 @@ type Incident struct {
 	DeletedAt  *time.Time `gorm:"column:deleted_at;default:null"`
 	UpdatedAt  *time.Time `gorm:"column:updated_at;default:null"`
 }
+type UpdateIncidentInput struct {
+	OperatorID *string  `json:"operator_id"`
+	Latitude   *float64 `json:"latitude"`
+	Longitude  *float64 `json:"longitude"`
+	Radius     *uint8   `json:"radius"`
+}
