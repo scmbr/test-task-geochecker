@@ -72,20 +72,32 @@ func (s *IncidentSvc) GetById(ctx context.Context, id string) (*dto.GetIncidentO
 }
 
 func (s *IncidentSvc) Update(ctx context.Context, id string, input *dto.UpdateIncidentInput) error {
-	err := s.incidentRepo.Update(ctx, id, models.Incident{
-		OperatorID: input.OperatorID,
-		Longitude:  input.Longitude,
-		Latitude:   input.Latitude,
-		Radius:     input.Radius,
-	})
+	incidentToUpdate := models.UpdateIncidentInput{}
+
+	if input.OperatorID != nil {
+		incidentToUpdate.OperatorID = input.OperatorID
+	}
+	if input.Latitude != nil {
+		incidentToUpdate.Latitude = input.Latitude
+	}
+	if input.Longitude != nil {
+		incidentToUpdate.Longitude = input.Longitude
+	}
+	if input.Radius != nil {
+		incidentToUpdate.Radius = input.Radius
+	}
+
+	err := s.incidentRepo.Update(ctx, id, incidentToUpdate)
 	if err != nil {
 		if errors.Is(err, repository.ErrNotFound) {
 			return ErrIncidentNotFound
 		}
 		return err
 	}
+
 	return nil
 }
+
 func (s *IncidentSvc) Delete(ctx context.Context, id string) error {
 	err := s.incidentRepo.Delete(ctx, id)
 	if err != nil {
