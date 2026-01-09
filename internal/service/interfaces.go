@@ -10,7 +10,7 @@ import (
 
 type IncidentService interface {
 	Create(ctx context.Context, input *dto.CreateIncidentInput) error
-	GetAll(ctx context.Context, offset, limit int) (*dto.GetAllIncidentOutput, error)
+	GetAll(ctx context.Context, input *dto.GetAllIncidentsInput) (*dto.GetAllIncidentsOutput, error)
 	GetById(ctx context.Context, id string) (*dto.GetIncidentOutput, error)
 	Update(ctx context.Context, id string, input *dto.UpdateIncidentInput) error
 	Delete(ctx context.Context, id string) error

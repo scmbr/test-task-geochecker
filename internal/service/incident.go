@@ -24,7 +24,7 @@ func (s *IncidentSvc) Create(ctx context.Context, input *dto.CreateIncidentInput
 		OperatorID: input.OperatorID,
 		Longitude:  input.Longitude,
 		Latitude:   input.Latitude,
-		Radius:     uint8(input.Radius),
+		Radius:     input.Radius,
 	})
 	if err != nil {
 		if errors.Is(err, repository.ErrAlreadyExists) {
@@ -33,8 +33,8 @@ func (s *IncidentSvc) Create(ctx context.Context, input *dto.CreateIncidentInput
 	}
 	return nil
 }
-func (s *IncidentSvc) GetAll(ctx context.Context, offset, limit int) (*dto.GetAllIncidentOutput, error) {
-	res, total, err := s.incidentRepo.GetAll(ctx, offset, limit)
+func (s *IncidentSvc) GetAll(ctx context.Context, input *dto.GetAllIncidentsInput) (*dto.GetAllIncidentsOutput, error) {
+	res, total, err := s.incidentRepo.GetAll(ctx, input.Offset, input.Limit)
 	if err != nil {
 		return nil, err
 	}
@@ -49,7 +49,7 @@ func (s *IncidentSvc) GetAll(ctx context.Context, offset, limit int) (*dto.GetAl
 			CreatedAt:  i.CreatedAt,
 		}
 	}
-	return &dto.GetAllIncidentOutput{
+	return &dto.GetAllIncidentsOutput{
 		Total:     total,
 		Incidents: incidents}, nil
 }
