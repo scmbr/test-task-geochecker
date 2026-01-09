@@ -26,8 +26,8 @@ type GetIncidentOutput struct {
 	CreatedAt  time.Time
 }
 type UpdateIncidentInput struct {
-	OperatorID string
-	Latitude   float64
-	Longitude  float64
-	Radius     uint8
+	OperatorID *string
+	Latitude   *float64
+	Longitude  *float64
+	Radius     *uint8
 }
