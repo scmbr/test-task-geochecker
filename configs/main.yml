@@ -1,0 +1,18 @@
+http:
+  port: 8000
+  maxHeaderBytes: 1
+  readTimeout: 10s
+  writeTimeout: 10s
+postgres:
+  host: localhost
+  port: 5432
+  sslmode: disable
+redis:
+  host: localhost
+  port: 6379
+  cacheTTL: 5m
+http:
+  port: 8000
+  maxHeaderBytes: 1
+  readTimeout: 10s
+  writeTimeout: 10s
