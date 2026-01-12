@@ -1,6 +1,6 @@
 services:
   db:
-    image: postgres:15
+    image: postgis/postgis:15-3.5  
     container_name: geochecker_postgres
     environment:
       POSTGRES_USER: "${POSTGRES_USER:-scmbr}"
@@ -64,7 +64,7 @@ services:
     depends_on:
       db:
         condition: service_healthy
-
+  
 volumes:
   postgres_data:
   redis_data:
