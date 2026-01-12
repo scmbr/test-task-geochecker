@@ -3,9 +3,9 @@ services:
     image: postgres:15
     container_name: geochecker_postgres
     environment:
-      POSTGRES_USER: ${POSTGRES_USER:-scmbr}
-      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-geochecker}
-      POSTGRES_DB:  ${POSTGRES_DB:-geochecker}
+      POSTGRES_USER: "${POSTGRES_USER:-scmbr}"
+      POSTGRES_PASSWORD: "${POSTGRES_PASSWORD:-geochecker}"
+      POSTGRES_DB:  "${POSTGRES_DB:-geochecker}"
     ports:
       - "5432:5432"
     healthcheck:
@@ -27,10 +27,13 @@ services:
       redis:
         condition: service_healthy
     environment:
-      POSTGRES_USER: ${POSTGRES_USER:-scmbr}
-      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-geochecker}
-      POSTGRES_DB:  ${POSTGRES_DB:-geochecker}
-      REDIS_PASSWORD: ${REDIS_PASSWORD:-geochecker}
+      POSTGRES_USER: "${POSTGRES_USER:-scmbr}"
+      POSTGRES_PASSWORD: "${POSTGRES_PASSWORD:-geochecker}"
+      POSTGRES_DB: "${POSTGRES_DB:-geochecker}"
+      REDIS_PASSWORD: "${REDIS_PASSWORD:-geochecker}"
+    volumes:
+      - ./backend/.env:/app/.env
+      - ./configs:/app/configs:ro
   redis:
     image: redis:7
     restart: always
@@ -39,7 +42,7 @@ services:
     volumes:
       - redis_data:/var/lib/redis/data
     environment:
-      REDIS_PASSWORD: ${REDIS_PASSWORD:-geochecker}
+      REDIS_PASSWORD: "${REDIS_PASSWORD:-geochecker}"
     healthcheck:
       test: ["CMD","redis-cli","ping"]
       interval: 1s
@@ -51,11 +54,13 @@ services:
     image: migrate/migrate 
     volumes:
       - ./migrations:/migrations
-    command: [
-      "-path", "/migrations",
-      "-database", "postgres://${POSTGRES_USER}:${POSTGRES_PASSWORD}@db:5432/${POSTGRES_DB}?sslmode=disable",
-      "up"
-    ]
+    environment:
+      POSTGRES_USER: "${POSTGRES_USER:-scmbr}"
+      POSTGRES_PASSWORD: "${POSTGRES_PASSWORD:-geochecker}"
+      POSTGRES_DB: "${POSTGRES_DB:-geochecker}"
+    command: ["-path", "/migrations", "-database", "postgres://${POSTGRES_USER:-scmbr}:${POSTGRES_PASSWORD:-geochecker}@db:5432/${POSTGRES_DB:-geochecker}?sslmode=disable", "up", "3"]
+    links: 
+      - db
     depends_on:
       db:
         condition: service_healthy
