@@ -4,7 +4,7 @@ import (
 	"context"
 	"time"
 
-	"github.com/scmbr/test-task-geochecker/internal/domain/models"
+	"github.com/scmbr/test-task-geochecker/internal/domain"
 	"gorm.io/gorm"
 )
 
@@ -15,8 +15,8 @@ type OperatorRepo struct {
 func NewOperatorRepository(db *gorm.DB) *OperatorRepo {
 	return &OperatorRepo{db: db}
 }
-func (r *OperatorRepo) GetActiveByAPIKeyHash(ctx context.Context, apiKeyHash string) (*models.Operator, error) {
-	var operator models.Operator
+func (r *OperatorRepo) GetActiveByAPIKeyHash(ctx context.Context, apiKeyHash string) (*domain.Operator, error) {
+	var operator domain.Operator
 
 	res := r.db.WithContext(ctx).
 		Where("api_key_hash = ?", apiKeyHash).
@@ -32,7 +32,7 @@ func (r *OperatorRepo) GetActiveByAPIKeyHash(ctx context.Context, apiKeyHash str
 
 	return &operator, nil
 }
-func (r *OperatorRepo) Create(ctx context.Context, operator models.Operator) error {
+func (r *OperatorRepo) Create(ctx context.Context, operator domain.Operator) error {
 	if err := r.db.WithContext(ctx).Create(&operator).Error; err != nil {
 		if err == gorm.ErrDuplicatedKey {
 			return ErrAlreadyExists

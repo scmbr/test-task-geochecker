@@ -4,7 +4,8 @@ import (
 	"context"
 	"time"
 
-	"github.com/scmbr/test-task-geochecker/internal/domain/models"
+	"github.com/scmbr/test-task-geochecker/internal/domain"
+	"github.com/scmbr/test-task-geochecker/internal/repository/models"
 	"gorm.io/gorm"
 )
 
@@ -16,7 +17,7 @@ func NewIncidentRepository(db *gorm.DB) *IncidentRepo {
 	return &IncidentRepo{db: db}
 }
 
-func (r *IncidentRepo) Create(ctx context.Context, incident models.Incident) error {
+func (r *IncidentRepo) Create(ctx context.Context, incident domain.Incident) error {
 	if err := r.db.WithContext(ctx).Create(&incident).Error; err != nil {
 		if err == gorm.ErrDuplicatedKey {
 			return ErrAlreadyExists
@@ -25,10 +26,10 @@ func (r *IncidentRepo) Create(ctx context.Context, incident models.Incident) err
 	}
 	return nil
 }
-func (r *IncidentRepo) GetAll(ctx context.Context, offset, limit int) ([]models.Incident, uint32, error) {
-	var incidents []models.Incident
+func (r *IncidentRepo) GetAll(ctx context.Context, offset, limit int) ([]domain.Incident, uint32, error) {
+	var incidents []domain.Incident
 	var total int64
-	q := r.db.WithContext(ctx).Model(&models.Incident{}).Where("deleted_at IS NULL")
+	q := r.db.WithContext(ctx).Model(&domain.Incident{}).Where("deleted_at IS NULL")
 
 	if err := q.Count(&total).Error; err != nil {
 		return nil, 0, err
@@ -39,8 +40,8 @@ func (r *IncidentRepo) GetAll(ctx context.Context, offset, limit int) ([]models.
 
 	return incidents, uint32(total), nil
 }
-func (r *IncidentRepo) GetById(ctx context.Context, id string) (*models.Incident, error) {
-	var incident models.Incident
+func (r *IncidentRepo) GetById(ctx context.Context, id string) (*domain.Incident, error) {
+	var incident domain.Incident
 	res := r.db.WithContext(ctx).Where("incident_id = ?", id).First(&incident)
 	if res.Error == gorm.ErrRecordNotFound {
 		return nil, ErrNotFound
