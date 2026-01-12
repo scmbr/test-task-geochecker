@@ -70,7 +70,6 @@ func setFromEnv(cfg *Config) {
 	cfg.Postgres.Name = os.Getenv("POSTGRES_DB")
 	cfg.Postgres.Password = os.Getenv("POSTGRES_PASSWORD")
 	cfg.Redis.Password = os.Getenv("REDIS_PASSWORD")
-	cfg.HTTP.Host = os.Getenv("HTTP_HOST")
 }
 func parseConfigFile(folder, env string) error {
 	viper.AddConfigPath(folder)
@@ -86,5 +85,5 @@ func parseConfigFile(folder, env string) error {
 
 	viper.SetConfigName(env)
 
-	return viper.MergeInConfig()
+	return nil
 }
