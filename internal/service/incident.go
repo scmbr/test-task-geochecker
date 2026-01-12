@@ -6,8 +6,9 @@ import (
 	"time"
 
 	"github.com/google/uuid"
-	"github.com/scmbr/test-task-geochecker/internal/domain/models"
+	"github.com/scmbr/test-task-geochecker/internal/domain"
 	"github.com/scmbr/test-task-geochecker/internal/repository"
+	"github.com/scmbr/test-task-geochecker/internal/repository/models"
 	"github.com/scmbr/test-task-geochecker/internal/service/dto"
 )
 
@@ -19,7 +20,7 @@ func NewIncidentService(incidentRepo repository.IncidentRepository) *IncidentSvc
 	return &IncidentSvc{incidentRepo: incidentRepo}
 }
 func (s *IncidentSvc) Create(ctx context.Context, input *dto.CreateIncidentInput) error {
-	err := s.incidentRepo.Create(ctx, models.Incident{
+	err := s.incidentRepo.Create(ctx, domain.Incident{
 		IncidentID: uuid.NewString(),
 		OperatorID: input.OperatorID,
 		Longitude:  input.Longitude,

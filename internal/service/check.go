@@ -5,7 +5,7 @@ import (
 	"errors"
 
 	"github.com/google/uuid"
-	"github.com/scmbr/test-task-geochecker/internal/domain/models"
+	"github.com/scmbr/test-task-geochecker/internal/domain"
 	"github.com/scmbr/test-task-geochecker/internal/repository"
 	"github.com/scmbr/test-task-geochecker/internal/service/dto"
 )
@@ -18,7 +18,7 @@ func NewCheckService(checkRepo repository.CheckRepository) *CheckSvc {
 	return &CheckSvc{checkRepo: checkRepo}
 }
 func (s *CheckSvc) Check(ctx context.Context, input *dto.CheckInput) error {
-	err := s.checkRepo.Create(ctx, models.Check{
+	err := s.checkRepo.Create(ctx, domain.Check{
 		CheckID:   uuid.NewString(),
 		UserID:    input.UserID,
 		Longitude: input.Longitude,
