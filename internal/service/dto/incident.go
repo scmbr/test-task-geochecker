@@ -6,7 +6,7 @@ type CreateIncidentInput struct {
 	OperatorID string
 	Latitude   float64
 	Longitude  float64
-	Radius     uint8
+	Radius     uint16
 }
 type GetAllIncidentsInput struct {
 	Limit  int
@@ -22,12 +22,12 @@ type GetIncidentOutput struct {
 	OperatorID string
 	Latitude   float64
 	Longitude  float64
-	Radius     uint8
+	Radius     uint16
 	CreatedAt  time.Time
 }
 type UpdateIncidentInput struct {
 	OperatorID *string
 	Latitude   *float64
 	Longitude  *float64
-	Radius     *uint8
+	Radius     *uint16
 }

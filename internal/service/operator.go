@@ -3,10 +3,9 @@ package service
 import (
 	"context"
 	"errors"
-	"time"
 
 	"github.com/google/uuid"
-	"github.com/scmbr/test-task-geochecker/internal/domain/models"
+	"github.com/scmbr/test-task-geochecker/internal/domain"
 	"github.com/scmbr/test-task-geochecker/internal/repository"
 	"github.com/scmbr/test-task-geochecker/internal/service/dto"
 	"golang.org/x/crypto/bcrypt"
@@ -26,14 +25,11 @@ func (s *OperatorSvc) Create(ctx context.Context, input *dto.CreateOperatorInput
 		return err
 	}
 
-	op := models.Operator{
-		OperatorID: uuid.NewString(),
-		Name:       input.Name,
-		APIKeyHash: string(hash),
-		CreatedAt:  time.Now(),
+	operator, err := domain.NewOperator(uuid.NewString(), input.Name, string(hash))
+	if err != nil {
+		return err
 	}
-
-	if err := s.operatorRepo.Create(ctx, op); err != nil {
+	if err := s.operatorRepo.Create(ctx, operator); err != nil {
 		if errors.Is(err, repository.ErrAlreadyExists) {
 			return ErrOperatorAlreadyExists
 		}

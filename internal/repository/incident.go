@@ -4,7 +4,8 @@ import (
 	"context"
 	"time"
 
-	"github.com/scmbr/test-task-geochecker/internal/domain/models"
+	"github.com/scmbr/test-task-geochecker/internal/domain"
+	"github.com/scmbr/test-task-geochecker/internal/repository/models"
 	"gorm.io/gorm"
 )
 
@@ -16,8 +17,9 @@ func NewIncidentRepository(db *gorm.DB) *IncidentRepo {
 	return &IncidentRepo{db: db}
 }
 
-func (r *IncidentRepo) Create(ctx context.Context, incident models.Incident) error {
-	if err := r.db.WithContext(ctx).Create(&incident).Error; err != nil {
+func (r *IncidentRepo) Create(ctx context.Context, incident *domain.Incident) error {
+	incidentModel := models.IncidentDomainToModel(incident)
+	if err := r.db.WithContext(ctx).Create(&incidentModel).Error; err != nil {
 		if err == gorm.ErrDuplicatedKey {
 			return ErrAlreadyExists
 		}
@@ -25,10 +27,10 @@ func (r *IncidentRepo) Create(ctx context.Context, incident models.Incident) err
 	}
 	return nil
 }
-func (r *IncidentRepo) GetAll(ctx context.Context, offset, limit int) ([]models.Incident, uint32, error) {
+func (r *IncidentRepo) GetAll(ctx context.Context, offset, limit int) ([]domain.Incident, uint32, error) {
 	var incidents []models.Incident
 	var total int64
-	q := r.db.WithContext(ctx).Model(&models.Incident{}).Where("deleted_at IS NULL")
+	q := r.db.WithContext(ctx).Model(&domain.Incident{}).Where("deleted_at IS NULL")
 
 	if err := q.Count(&total).Error; err != nil {
 		return nil, 0, err
@@ -36,10 +38,13 @@ func (r *IncidentRepo) GetAll(ctx context.Context, offset, limit int) ([]models.
 	if err := q.Order("created_at DESC").Limit(limit).Offset(offset).Find(&incidents).Error; err != nil {
 		return nil, 0, err
 	}
-
-	return incidents, uint32(total), nil
+	incidentsDomain := make([]domain.Incident, len(incidents))
+	for idx := range incidentsDomain {
+		incidentsDomain[idx] = *models.IncidentModelToDomain(&incidents[idx])
+	}
+	return incidentsDomain, uint32(total), nil
 }
-func (r *IncidentRepo) GetById(ctx context.Context, id string) (*models.Incident, error) {
+func (r *IncidentRepo) GetById(ctx context.Context, id string) (*domain.Incident, error) {
 	var incident models.Incident
 	res := r.db.WithContext(ctx).Where("incident_id = ?", id).First(&incident)
 	if res.Error == gorm.ErrRecordNotFound {
@@ -48,7 +53,7 @@ func (r *IncidentRepo) GetById(ctx context.Context, id string) (*models.Incident
 	if res.Error != nil {
 		return nil, res.Error
 	}
-	return &incident, nil
+	return models.IncidentModelToDomain(&incident), nil
 }
 func (r *IncidentRepo) Update(ctx context.Context, id string, input models.UpdateIncidentInput) error {
 	updates := map[string]interface{}{
