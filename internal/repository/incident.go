@@ -27,7 +27,7 @@ func (r *IncidentRepo) Create(ctx context.Context, incident *domain.Incident) er
 	}
 	return nil
 }
-func (r *IncidentRepo) GetAll(ctx context.Context, offset, limit int) ([]domain.Incident, uint32, error) {
+func (r *IncidentRepo) GetAll(ctx context.Context, offset, limit int) ([]*domain.Incident, uint32, error) {
 	var incidents []models.Incident
 	var total int64
 	q := r.db.WithContext(ctx).Model(&domain.Incident{}).Where("deleted_at IS NULL")
@@ -38,9 +38,13 @@ func (r *IncidentRepo) GetAll(ctx context.Context, offset, limit int) ([]domain.
 	if err := q.Order("created_at DESC").Limit(limit).Offset(offset).Find(&incidents).Error; err != nil {
 		return nil, 0, err
 	}
-	incidentsDomain := make([]domain.Incident, len(incidents))
+	incidentsDomain := make([]*domain.Incident, len(incidents))
 	for idx := range incidentsDomain {
-		incidentsDomain[idx] = *models.IncidentModelToDomain(&incidents[idx])
+		var err error
+		incidentsDomain[idx], err = models.IncidentModelToDomain(&incidents[idx])
+		if err != nil {
+			return nil, 0, err
+		}
 	}
 	return incidentsDomain, uint32(total), nil
 }
@@ -53,7 +57,11 @@ func (r *IncidentRepo) GetById(ctx context.Context, id string) (*domain.Incident
 	if res.Error != nil {
 		return nil, res.Error
 	}
-	return models.IncidentModelToDomain(&incident), nil
+	incidentDomain, err := models.IncidentModelToDomain(&incident)
+	if err != nil {
+		return nil, err
+	}
+	return incidentDomain, nil
 }
 func (r *IncidentRepo) Update(ctx context.Context, id string, input models.UpdateIncidentInput) error {
 	updates := map[string]interface{}{

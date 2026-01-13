@@ -9,8 +9,7 @@ import (
 type Check struct {
 	CheckID   string    `gorm:"primaryKey;column:check_id"`
 	UserID    string    `gorm:"column:user_id;not null"`
-	Longitude float64   `gorm:"column:longitude;not null"`
-	Latitude  float64   `gorm:"column:latitude;not null"`
+	Location  string    `gorm:"column:location;type:geometry(POINT,4326);not null"`
 	CreatedAt time.Time `gorm:"column:created_at;autoCreateTime"`
 }
 
@@ -18,17 +17,20 @@ func CheckDomainToModel(c *domain.Check) *Check {
 	return &Check{
 		CheckID:   c.CheckID,
 		UserID:    c.UserID,
-		Longitude: c.Longitude,
-		Latitude:  c.Latitude,
+		Location:  pointWKT(c.Longitude, c.Latitude),
 		CreatedAt: c.CreatedAt,
 	}
 }
-func CheckModelToDomain(m *Check) *domain.Check {
+func CheckModelToDomain(m *Check) (*domain.Check, error) {
+	lon, lat, err := parsePointWKT(m.Location)
+	if err != nil {
+		return nil, err
+	}
 	return &domain.Check{
 		CheckID:   m.CheckID,
 		UserID:    m.UserID,
-		Longitude: m.Longitude,
-		Latitude:  m.Latitude,
+		Longitude: lon,
+		Latitude:  lat,
 		CreatedAt: m.CreatedAt,
-	}
+	}, nil
 }

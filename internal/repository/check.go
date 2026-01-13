@@ -34,5 +34,9 @@ func (r *CheckRepo) GetById(ctx context.Context, id string) (*domain.Check, erro
 	if res.Error != nil {
 		return nil, res.Error
 	}
-	return models.CheckModelToDomain(&check), nil
+	checkDomain, err := models.CheckModelToDomain(&check)
+	if err != nil {
+		return nil, err
+	}
+	return checkDomain, nil
 }
