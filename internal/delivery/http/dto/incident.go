@@ -5,7 +5,7 @@ import "time"
 type CreateIncidentRequest struct {
 	Latitude  float64 `json:"latitude" binding:"required"`
 	Longitude float64 `json:"longitude" binding:"required"`
-	Radius    uint8   `json:"radius" binding:"required"`
+	Radius    uint16  `json:"radius" binding:"required"`
 }
 
 type GetAllIncidentsRequest struct {
@@ -21,12 +21,12 @@ type GetIncidentResponse struct {
 	OperatorID string    `json:"operator_id"`
 	Latitude   float64   `json:"latitude"`
 	Longitude  float64   `json:"longitude"`
-	Radius     uint8     `json:"radius"`
+	Radius     uint16    `json:"radius"`
 	CreatedAt  time.Time `json:"created_at"`
 }
 type UpdateIncidentRequest struct {
 	OperatorID *string  `json:"operator_id"`
 	Latitude   *float64 `json:"latitude"`
 	Longitude  *float64 `json:"longitude" `
-	Radius     *uint8   `json:"radius"`
+	Radius     *uint16  `json:"radius"`
 }

@@ -16,5 +16,5 @@ type UpdateIncidentInput struct {
 	OperatorID *string  `json:"operator_id"`
 	Latitude   *float64 `json:"latitude"`
 	Longitude  *float64 `json:"longitude"`
-	Radius     *uint8   `json:"radius"`
+	Radius     *uint16  `json:"radius"`
 }
