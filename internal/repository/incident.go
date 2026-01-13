@@ -18,7 +18,8 @@ func NewIncidentRepository(db *gorm.DB) *IncidentRepo {
 }
 
 func (r *IncidentRepo) Create(ctx context.Context, incident *domain.Incident) error {
-	if err := r.db.WithContext(ctx).Create(&incident).Error; err != nil {
+	incidentModel := models.IncidentDomainToModel(incident)
+	if err := r.db.WithContext(ctx).Create(&incidentModel).Error; err != nil {
 		if err == gorm.ErrDuplicatedKey {
 			return ErrAlreadyExists
 		}
@@ -27,7 +28,7 @@ func (r *IncidentRepo) Create(ctx context.Context, incident *domain.Incident) er
 	return nil
 }
 func (r *IncidentRepo) GetAll(ctx context.Context, offset, limit int) ([]domain.Incident, uint32, error) {
-	var incidents []domain.Incident
+	var incidents []models.Incident
 	var total int64
 	q := r.db.WithContext(ctx).Model(&domain.Incident{}).Where("deleted_at IS NULL")
 
@@ -37,11 +38,14 @@ func (r *IncidentRepo) GetAll(ctx context.Context, offset, limit int) ([]domain.
 	if err := q.Order("created_at DESC").Limit(limit).Offset(offset).Find(&incidents).Error; err != nil {
 		return nil, 0, err
 	}
-
-	return incidents, uint32(total), nil
+	incidentsDomain := make([]domain.Incident, len(incidents))
+	for idx := range incidentsDomain {
+		incidentsDomain[idx] = *models.IncidentModelToDomain(&incidents[idx])
+	}
+	return incidentsDomain, uint32(total), nil
 }
 func (r *IncidentRepo) GetById(ctx context.Context, id string) (*domain.Incident, error) {
-	var incident domain.Incident
+	var incident models.Incident
 	res := r.db.WithContext(ctx).Where("incident_id = ?", id).First(&incident)
 	if res.Error == gorm.ErrRecordNotFound {
 		return nil, ErrNotFound
@@ -49,7 +53,7 @@ func (r *IncidentRepo) GetById(ctx context.Context, id string) (*domain.Incident
 	if res.Error != nil {
 		return nil, res.Error
 	}
-	return &incident, nil
+	return models.IncidentModelToDomain(&incident), nil
 }
 func (r *IncidentRepo) Update(ctx context.Context, id string, input models.UpdateIncidentInput) error {
 	updates := map[string]interface{}{
