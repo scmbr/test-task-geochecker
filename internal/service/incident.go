@@ -24,7 +24,7 @@ func (s *IncidentSvc) Create(ctx context.Context, input *dto.CreateIncidentInput
 	if err != nil {
 		return err
 	}
-	err = s.incidentRepo.Create(ctx, *incident)
+	err = s.incidentRepo.Create(ctx, incident)
 
 	if err != nil {
 		if errors.Is(err, repository.ErrAlreadyExists) {

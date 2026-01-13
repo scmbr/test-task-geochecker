@@ -14,7 +14,7 @@ type CheckRepo struct {
 func NewCheckRepository(db *gorm.DB) *CheckRepo {
 	return &CheckRepo{db: db}
 }
-func (r *CheckRepo) Create(ctx context.Context, check domain.Check) error {
+func (r *CheckRepo) Create(ctx context.Context, check *domain.Check) error {
 	if err := r.db.WithContext(ctx).Create(check).Error; err != nil {
 		if err == gorm.ErrDuplicatedKey {
 			return ErrAlreadyExists

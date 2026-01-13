@@ -22,7 +22,7 @@ func (s *CheckSvc) Check(ctx context.Context, input *dto.CheckInput) error {
 	if err != nil {
 		return err
 	}
-	err = s.checkRepo.Create(ctx, *check)
+	err = s.checkRepo.Create(ctx, check)
 	if err != nil {
 		if errors.Is(err, repository.ErrAlreadyExists) {
 			return ErrCheckAlreadyExists
