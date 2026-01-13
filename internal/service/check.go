@@ -18,12 +18,11 @@ func NewCheckService(checkRepo repository.CheckRepository) *CheckSvc {
 	return &CheckSvc{checkRepo: checkRepo}
 }
 func (s *CheckSvc) Check(ctx context.Context, input *dto.CheckInput) error {
-	err := s.checkRepo.Create(ctx, domain.Check{
-		CheckID:   uuid.NewString(),
-		UserID:    input.UserID,
-		Longitude: input.Longitude,
-		Latitude:  input.Latitude,
-	})
+	check, err := domain.NewCheck(uuid.NewString(), input.UserID, input.Latitude, input.Longitude)
+	if err != nil {
+		return err
+	}
+	err = s.checkRepo.Create(ctx, *check)
 	if err != nil {
 		if errors.Is(err, repository.ErrAlreadyExists) {
 			return ErrCheckAlreadyExists
