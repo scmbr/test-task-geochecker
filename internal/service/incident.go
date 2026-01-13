@@ -20,13 +20,12 @@ func NewIncidentService(incidentRepo repository.IncidentRepository) *IncidentSvc
 	return &IncidentSvc{incidentRepo: incidentRepo}
 }
 func (s *IncidentSvc) Create(ctx context.Context, input *dto.CreateIncidentInput) error {
-	err := s.incidentRepo.Create(ctx, domain.Incident{
-		IncidentID: uuid.NewString(),
-		OperatorID: input.OperatorID,
-		Longitude:  input.Longitude,
-		Latitude:   input.Latitude,
-		Radius:     input.Radius,
-	})
+	incident, err := domain.NewIncident(uuid.NewString(), input.OperatorID, input.Latitude, input.Longitude, uint16(input.Radius))
+	if err != nil {
+		return err
+	}
+	err = s.incidentRepo.Create(ctx, *incident)
+
 	if err != nil {
 		if errors.Is(err, repository.ErrAlreadyExists) {
 			return ErrIncidentAlreadyExists
