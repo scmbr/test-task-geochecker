@@ -42,6 +42,7 @@ func Run(configsDir string) {
 	service := service.NewService(service.Deps{
 		Repos:        repository,
 		RadiusMeters: cfg.SearchRadius,
+		ApiKeySecret: cfg.ApiKeySecret,
 	})
 	handler := handler.NewHandler(service)
 	server := server.NewServer(cfg, handler.Init())

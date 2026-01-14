@@ -18,6 +18,7 @@ type (
 		Redis        RedisConfig
 		HTTP         HTTPConfig
 		SearchRadius uint16 `mapstructure:"searchRadius"`
+		ApiKeySecret string
 	}
 	PostgresConfig struct {
 		Username string
@@ -73,6 +74,7 @@ func setFromEnv(cfg *Config) {
 	cfg.Postgres.Name = os.Getenv("POSTGRES_DB")
 	cfg.Postgres.Password = os.Getenv("POSTGRES_PASSWORD")
 	cfg.Redis.Password = os.Getenv("REDIS_PASSWORD")
+	cfg.ApiKeySecret = os.Getenv("API_KEY_SECRET")
 }
 func parseConfigFile(folder, env string) error {
 	viper.AddConfigPath(folder)

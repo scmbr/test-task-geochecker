@@ -33,12 +33,13 @@ type Service struct {
 type Deps struct {
 	Repos        *repository.Repository
 	RadiusMeters uint16
+	ApiKeySecret string
 }
 
 func NewService(deps Deps) *Service {
 	return &Service{
 		Incident: NewIncidentService(deps.Repos.Incident),
 		Check:    NewCheckService(deps.Repos.Check, deps.Repos.Incident, deps.RadiusMeters),
-		Operator: NewOperatorService(deps.Repos.Operator),
+		Operator: NewOperatorService(deps.Repos.Operator, deps.ApiKeySecret),
 	}
 }
