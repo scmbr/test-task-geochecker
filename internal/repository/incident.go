@@ -117,7 +117,7 @@ func (r *IncidentRepo) FindNearbyIncidents(ctx context.Context, lat, lon float64
 	point := models.PointWKT(lon, lat)
 	radiusMeters := float64(radius)
 	if err := r.db.WithContext(ctx).
-		Where("ST_DWithin(location, ST_GeomFromText(?, 4326)::geography, ?)", point, radiusMeters).
+		Where("ST_DWithin(location, ST_GeomFromText(?, 4326)::geography, ? + radius)", point, radiusMeters).
 		Find(&incidents).Error; err != nil {
 		return nil, err
 	}
