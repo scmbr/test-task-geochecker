@@ -39,7 +39,10 @@ func Run(configsDir string) {
 	}
 	logger.Info("database connected successfully")
 	repository := repository.NewRepository(db)
-	service := service.NewService(repository)
+	service := service.NewService(service.Deps{
+		Repos:        repository,
+		RadiusMeters: cfg.SearchRadius,
+	})
 	handler := handler.NewHandler(service)
 	server := server.NewServer(cfg, handler.Init())
 	go func() {
