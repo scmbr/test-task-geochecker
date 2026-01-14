@@ -13,10 +13,11 @@ const (
 
 type (
 	Config struct {
-		Environment string
-		Postgres    PostgresConfig
-		Redis       RedisConfig
-		HTTP        HTTPConfig
+		Environment  string
+		Postgres     PostgresConfig
+		Redis        RedisConfig
+		HTTP         HTTPConfig
+		SearchRadius uint16 `mapstructure:"searchRadius"`
 	}
 	PostgresConfig struct {
 		Username string
@@ -62,7 +63,9 @@ func unmarshal(cfg *Config) error {
 	if err := viper.UnmarshalKey("redis", &cfg.Redis); err != nil {
 		return err
 	}
-
+	if err := viper.UnmarshalKey("searchRadius", &cfg.SearchRadius); err != nil {
+		return err
+	}
 	return nil
 }
 func setFromEnv(cfg *Config) {
