@@ -30,11 +30,15 @@ type Service struct {
 	Check    CheckService
 	Operator OperatorService
 }
+type Deps struct {
+	Repos        *repository.Repository
+	RadiusMeters uint16
+}
 
-func NewService(repo *repository.Repository) *Service {
+func NewService(deps Deps) *Service {
 	return &Service{
-		Incident: NewIncidentService(repo.Incident),
-		Check:    NewCheckService(repo.Check),
-		Operator: NewOperatorService(repo.Operator),
+		Incident: NewIncidentService(deps.Repos.Incident),
+		Check:    NewCheckService(deps.Repos.Check, deps.Repos.Incident, deps.RadiusMeters),
+		Operator: NewOperatorService(deps.Repos.Operator),
 	}
 }
