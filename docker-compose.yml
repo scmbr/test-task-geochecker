@@ -51,7 +51,7 @@ services:
       timeout: 3s
       retries: 30
       start_period: 5s
-    command: ["redis-server", "--requirepass", "${REDIS_PASSWORD}"]
+    command: ["redis-server", "--requirepass", "${REDIS_PASSWORD:-geochecker}"]
   migrate: 
     image: migrate/migrate 
     volumes:
