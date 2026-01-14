@@ -154,3 +154,32 @@ func (h *Handler) deleteIncidentById(c *gin.Context) {
 	}
 	c.Status(http.StatusNoContent)
 }
+func (h *Handler) getIncidentStatsById(c *gin.Context) {
+	id := c.Param("id")
+	if _, err := uuid.Parse(id); err != nil {
+		newResponse(c, http.StatusBadRequest, "invalid id format")
+		return
+	}
+	sinceMinutesStr := c.DefaultQuery("since_minutes", "20")
+	sinceMinutes, err := strconv.Atoi(sinceMinutesStr)
+	if err != nil || sinceMinutes <= 0 {
+		newResponse(c, http.StatusBadRequest, "invalid since_minutes")
+		return
+	}
+
+	since := time.Now().Add(-time.Duration(sinceMinutes) * time.Minute)
+	count, err := h.service.Incident.GetStats(c.Request.Context(), id, since)
+	if err != nil {
+		if errors.Is(err, service.ErrIncidentNotFound) {
+			newResponse(c, http.StatusNotFound, "incident not found")
+			return
+		}
+		newResponse(c, http.StatusInternalServerError, "something went wrong")
+		return
+	}
+	c.JSON(http.StatusOK, handler_dto.GetIncidentStatsByIdResponse{
+		IncidentID:   id,
+		UserCount:    count,
+		SinceMinutes: since,
+	})
+}
