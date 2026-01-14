@@ -16,6 +16,7 @@ type IncidentRepository interface {
 	Update(ctx context.Context, id string, input models.UpdateIncidentInput) error
 	Delete(ctx context.Context, id string) error
 	CountUniqueUsers(ctx context.Context, incidentID string, since time.Time) (int, error)
+	FindNearbyIncidents(ctx context.Context, lat, lon float64, radius uint16) ([]*domain.Incident, error)
 }
 type CheckRepository interface {
 	Create(ctx context.Context, check *domain.Check) error

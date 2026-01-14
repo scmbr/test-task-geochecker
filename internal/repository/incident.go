@@ -112,3 +112,22 @@ func (r *IncidentRepo) CountUniqueUsers(ctx context.Context, incidentID string, 
 	}
 	return int(count), nil
 }
+func (r *IncidentRepo) FindNearbyIncidents(ctx context.Context, lat, lon float64, radius uint16) ([]*domain.Incident, error) {
+	var incidents []*models.Incident
+	point := models.PointWKT(lon, lat)
+	radiusMeters := float64(radius)
+	if err := r.db.WithContext(ctx).
+		Where("ST_DWithin(location, ST_GeomFromText(?, 4326)::geography, ?)", point, radiusMeters).
+		Find(&incidents).Error; err != nil {
+		return nil, err
+	}
+	incidentsDomain := make([]*domain.Incident, len(incidents))
+	for idx := range incidentsDomain {
+		var err error
+		incidentsDomain[idx], err = models.IncidentModelToDomain(incidents[idx])
+		if err != nil {
+			return nil, err
+		}
+	}
+	return incidentsDomain, nil
+}
