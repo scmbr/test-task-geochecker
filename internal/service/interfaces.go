@@ -17,7 +17,7 @@ type IncidentService interface {
 	GetStats(ctx context.Context, incidentID string, since time.Time) (int, error)
 }
 type CheckService interface {
-	Check(ctx context.Context, input *dto.CheckInput) error
+	Check(ctx context.Context, input *dto.CheckInput) ([]*dto.GetIncidentOutput, error)
 	GetById(ctx context.Context, id string) (*dto.GetCheckOutput, error)
 }
 type OperatorService interface {
