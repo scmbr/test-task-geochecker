@@ -24,7 +24,7 @@ type UpdateIncidentInput struct {
 }
 
 func IncidentModelToDomain(m *Incident) (*domain.Incident, error) {
-	lon, lat, err := parsePointWKT(m.Location)
+	lon, lat, err := ParsePointWKT(m.Location)
 	if err != nil {
 		return nil, err
 	}
@@ -45,16 +45,16 @@ func IncidentDomainToModel(i *domain.Incident) *Incident {
 	return &Incident{
 		IncidentID: i.IncidentID,
 		OperatorID: i.OperatorID,
-		Location:   pointWKT(i.Longitude, i.Latitude),
+		Location:   PointWKT(i.Longitude, i.Latitude),
 		Radius:     i.Radius,
 		CreatedAt:  now,
 		UpdatedAt:  &now,
 	}
 }
-func pointWKT(lon, lat float64) string {
-	return fmt.Sprintf("POINT(%f %f)", lon, lat)
+func PointWKT(lon, lat float64) string {
+	return fmt.Sprintf("SRID=4326;POINT(%f %f)", lon, lat)
 }
-func parsePointWKT(wkt string) (lon, lat float64, err error) {
-	_, err = fmt.Sscanf(wkt, "POINT(%f %f)", &lon, &lat)
+func ParsePointWKT(wkt string) (lon, lat float64, err error) {
+	_, err = fmt.Sscanf(wkt, "SRID=4326;POINT(%f %f)", &lon, &lat)
 	return
 }

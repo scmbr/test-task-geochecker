@@ -17,12 +17,12 @@ func CheckDomainToModel(c *domain.Check) *Check {
 	return &Check{
 		CheckID:   c.CheckID,
 		UserID:    c.UserID,
-		Location:  pointWKT(c.Longitude, c.Latitude),
+		Location:  PointWKT(c.Longitude, c.Latitude),
 		CreatedAt: c.CreatedAt,
 	}
 }
 func CheckModelToDomain(m *Check) (*domain.Check, error) {
-	lon, lat, err := parsePointWKT(m.Location)
+	lon, lat, err := ParsePointWKT(m.Location)
 	if err != nil {
 		return nil, err
 	}
