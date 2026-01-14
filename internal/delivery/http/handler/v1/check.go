@@ -20,13 +20,29 @@ func (h *Handler) createCheck(c *gin.Context) {
 		newResponse(c, http.StatusBadRequest, err.Error())
 		return
 	}
-	if err := h.service.Check.Check(c.Request.Context(), &service_dto.CheckInput{
+	incidents, err := h.service.Check.Check(c.Request.Context(), &service_dto.CheckInput{
 		UserID:    input.UserID,
 		Latitude:  input.Latitude,
 		Longitude: input.Longitude,
-	}); err != nil {
+	})
+	if err != nil {
 		newResponse(c, http.StatusInternalServerError, "something went wrong")
 		return
 	}
-	c.Status(http.StatusCreated)
+	nearbyIncidents := make([]handler_dto.GetIncidentResponse, len(incidents))
+	for idx, i := range incidents {
+		nearbyIncidents[idx] = handler_dto.GetIncidentResponse{
+			ID:         i.ID,
+			OperatorID: i.OperatorID,
+			Latitude:   i.Latitude,
+			Longitude:  i.Longitude,
+			Radius:     i.Radius,
+			CreatedAt:  i.CreatedAt,
+		}
+	}
+
+	c.JSON(http.StatusCreated, handler_dto.CreateCheckResponse{
+		Count:     uint16(len(nearbyIncidents)),
+		Incidents: nearbyIncidents,
+	})
 }
