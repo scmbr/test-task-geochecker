@@ -14,6 +14,7 @@ services:
       timeout: 3s
       retries: 3
     volumes:
+      - ./docker/postgres/init:/docker-entrypoint-initdb.d
       - postgres_data:/var/lib/postgresql/data
   backend:
     build:
