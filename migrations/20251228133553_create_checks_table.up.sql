@@ -1,4 +1,4 @@
-CREATE TABLE checks (
+CREATE TABLE IF NOT EXISTS checks (
     check_id UUID PRIMARY KEY,
     user_id UUID NOT NULL,
     location geometry(POINT,4326) NOT NULL,
@@ -7,4 +7,4 @@ CREATE TABLE checks (
     updated_at TIMESTAMPTZ
 );
 
-CREATE INDEX idx_incidents_location ON incidents USING GIST(location);
+CREATE INDEX IF NOT EXISTS idx_incidents_location ON incidents USING GIST(location);

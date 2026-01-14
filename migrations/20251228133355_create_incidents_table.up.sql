@@ -1,4 +1,4 @@
-CREATE TABLE incidents (
+CREATE TABLE IF NOT EXISTS incidents (
     incident_id UUID PRIMARY KEY,
     operator_id UUID NOT NULL,
     location geometry(POINT,4326) NOT NULL,
@@ -8,4 +8,4 @@ CREATE TABLE incidents (
     updated_at TIMESTAMPTZ
 );
 
-CREATE INDEX idx_incidents_location ON incidents USING GIST(location);
+CREATE INDEX If NOT EXISTS idx_incidents_location ON incidents USING GIST(location);
