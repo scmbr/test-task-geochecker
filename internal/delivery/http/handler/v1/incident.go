@@ -72,12 +72,14 @@ func (h *Handler) getAllIncidents(c *gin.Context) {
 		return
 	}
 	incidents := make([]handler_dto.GetIncidentResponse, len(res.Incidents))
-	for idx := range incidents {
-		incidents[idx].ID = res.Incidents[idx].ID
-		incidents[idx].Latitude = res.Incidents[idx].Latitude
-		incidents[idx].Longitude = res.Incidents[idx].Longitude
-		incidents[idx].Radius = res.Incidents[idx].Radius
-		incidents[idx].CreatedAt = res.Incidents[idx].CreatedAt
+	for idx, i := range res.Incidents {
+		incidents[idx] = handler_dto.GetIncidentResponse{
+			ID:        i.ID,
+			Latitude:  i.Latitude,
+			Longitude: i.Longitude,
+			Radius:    i.Radius,
+			CreatedAt: i.CreatedAt,
+		}
 	}
 	c.JSON(http.StatusOK, handler_dto.GetAllIncidentsResponse{
 		Total:     int32(res.Total),
