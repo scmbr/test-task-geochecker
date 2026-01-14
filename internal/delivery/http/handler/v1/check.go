@@ -32,7 +32,7 @@ func (h *Handler) createCheck(c *gin.Context) {
 	nearbyIncidents := make([]handler_dto.GetIncidentResponse, len(incidents))
 	for idx, i := range incidents {
 		nearbyIncidents[idx] = handler_dto.GetIncidentResponse{
-			ID:         i.ID,
+			IncidentID: i.ID,
 			OperatorID: i.OperatorID,
 			Latitude:   i.Latitude,
 			Longitude:  i.Longitude,

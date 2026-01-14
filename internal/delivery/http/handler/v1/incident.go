@@ -4,6 +4,7 @@ import (
 	"errors"
 	"net/http"
 	"strconv"
+	"time"
 
 	"github.com/gin-gonic/gin"
 	"github.com/google/uuid"
@@ -18,6 +19,7 @@ func (h *Handler) initIncidentsRoutes(api *gin.RouterGroup) {
 		incidents.POST("", h.createIncident)
 		incidents.GET("", h.getAllIncidents)
 		incidents.GET("/:id", h.getIncidentById)
+		incidents.GET("/stats/:id", h.getIncidentStatsById)
 		incidents.PUT("/:id", h.updateIncidentById)
 		incidents.DELETE("/:id", h.deleteIncidentById)
 	}
@@ -74,11 +76,11 @@ func (h *Handler) getAllIncidents(c *gin.Context) {
 	incidents := make([]handler_dto.GetIncidentResponse, len(res.Incidents))
 	for idx, i := range res.Incidents {
 		incidents[idx] = handler_dto.GetIncidentResponse{
-			ID:        i.ID,
-			Latitude:  i.Latitude,
-			Longitude: i.Longitude,
-			Radius:    i.Radius,
-			CreatedAt: i.CreatedAt,
+			IncidentID: i.ID,
+			Latitude:   i.Latitude,
+			Longitude:  i.Longitude,
+			Radius:     i.Radius,
+			CreatedAt:  i.CreatedAt,
 		}
 	}
 	c.JSON(http.StatusOK, handler_dto.GetAllIncidentsResponse{
@@ -103,11 +105,11 @@ func (h *Handler) getIncidentById(c *gin.Context) {
 		return
 	}
 	incident := handler_dto.GetIncidentResponse{
-		ID:        res.ID,
-		Latitude:  res.Latitude,
-		Longitude: res.Longitude,
-		Radius:    res.Radius,
-		CreatedAt: res.CreatedAt,
+		IncidentID: res.ID,
+		Latitude:   res.Latitude,
+		Longitude:  res.Longitude,
+		Radius:     res.Radius,
+		CreatedAt:  res.CreatedAt,
 	}
 	c.JSON(http.StatusOK, incident)
 
