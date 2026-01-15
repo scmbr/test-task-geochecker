@@ -30,7 +30,7 @@ func (r *IncidentRepo) Create(ctx context.Context, incident *domain.Incident) er
 func (r *IncidentRepo) GetAll(ctx context.Context, offset, limit int) ([]*domain.Incident, uint32, error) {
 	var incidents []models.Incident
 	var total int64
-	q := r.db.WithContext(ctx).Model(&domain.Incident{}).Where("deleted_at IS NULL")
+	q := r.db.WithContext(ctx).Model(&models.Incident{}).Where("deleted_at IS NULL")
 
 	if err := q.Count(&total).Error; err != nil {
 		return nil, 0, err
