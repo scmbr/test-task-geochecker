@@ -44,7 +44,12 @@ func Run(configsDir string) {
 		RadiusMeters: cfg.SearchRadius,
 		ApiKeySecret: cfg.ApiKeySecret,
 	})
-	handler := handler.NewHandler(service)
+	sqlDB, err := db.DB()
+	if err != nil {
+		logger.Error("failed to get generic database interface: %v", err)
+		os.Exit(1)
+	}
+	handler := handler.NewHandler(service, sqlDB)
 	server := server.NewServer(cfg, handler.Init())
 	go func() {
 		if err := server.Run(); !errors.Is(err, http.ErrServerClosed) {
