@@ -3,7 +3,6 @@ package v1
 import (
 	"errors"
 	"net/http"
-	"strings"
 
 	"github.com/gin-gonic/gin"
 )
@@ -27,19 +26,10 @@ func (h *Handler) operatorIdentity(c *gin.Context) {
 	c.Set(operatorCtx, operator.OperatorID)
 }
 func (h *Handler) parseAuthHeader(c *gin.Context) (string, error) {
-	header := c.GetHeader(authorizationHeader)
-	if header == "" {
+	apiKey := c.GetHeader("X-API-Key")
+	if apiKey == "" {
 		return "", errors.New("empty auth header")
 	}
 
-	headerParts := strings.Split(header, " ")
-	if len(headerParts) != 2 || headerParts[0] != "Api-Key" {
-		return "", errors.New("invalid auth header")
-	}
-
-	if len(headerParts[1]) == 0 {
-		return "", errors.New("token is empty")
-	}
-
-	return headerParts[1], nil
+	return apiKey, nil
 }

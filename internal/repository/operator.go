@@ -5,6 +5,7 @@ import (
 	"time"
 
 	"github.com/scmbr/test-task-geochecker/internal/domain"
+	"github.com/scmbr/test-task-geochecker/internal/repository/models"
 	"gorm.io/gorm"
 )
 
@@ -34,15 +35,13 @@ func (r *OperatorRepo) GetActiveByAPIKeyHash(ctx context.Context, apiKeyHash str
 }
 func (r *OperatorRepo) Create(ctx context.Context, operator *domain.Operator) error {
 	if err := r.db.WithContext(ctx).Create(&operator).Error; err != nil {
-		if err == gorm.ErrDuplicatedKey {
-			return ErrAlreadyExists
-		}
 		return err
 	}
 	return nil
 }
 func (r *OperatorRepo) Revoke(ctx context.Context, operatorID string) error {
 	res := r.db.WithContext(ctx).
+		Model(&models.Operator{}).
 		Where("operator_id = ?", operatorID).
 		Where("revoked_at IS NULL").
 		Update("revoked_at", time.Now())

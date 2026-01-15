@@ -17,7 +17,7 @@ type GetAllIncidentsResponse struct {
 	Incidents []GetIncidentResponse `json:"incidents"`
 }
 type GetIncidentResponse struct {
-	ID         string    `json:"id"`
+	IncidentID string    `json:"incident_id"`
 	OperatorID string    `json:"operator_id"`
 	Latitude   float64   `json:"latitude"`
 	Longitude  float64   `json:"longitude"`
@@ -29,4 +29,9 @@ type UpdateIncidentRequest struct {
 	Latitude   *float64 `json:"latitude"`
 	Longitude  *float64 `json:"longitude" `
 	Radius     *uint16  `json:"radius"`
+}
+type GetIncidentStatsByIdResponse struct {
+	IncidentID   string    `json:"incident_id"`
+	UserCount    int       `json:"user_count"`
+	SinceMinutes time.Time `json:"since_minutes"`
 }

@@ -11,11 +11,12 @@ import (
 
 type IncidentRepository interface {
 	Create(ctx context.Context, incident *domain.Incident) error
-	GetAll(ctx context.Context, offset, limit int) ([]domain.Incident, uint32, error)
+	GetAll(ctx context.Context, offset, limit int) ([]*domain.Incident, uint32, error)
 	GetById(ctx context.Context, id string) (*domain.Incident, error)
 	Update(ctx context.Context, id string, input models.UpdateIncidentInput) error
 	Delete(ctx context.Context, id string) error
 	CountUniqueUsers(ctx context.Context, incidentID string, since time.Time) (int, error)
+	FindNearbyIncidents(ctx context.Context, lat, lon float64, radius uint16) ([]*domain.Incident, error)
 }
 type CheckRepository interface {
 	Create(ctx context.Context, check *domain.Check) error
@@ -26,16 +27,21 @@ type OperatorRepository interface {
 	Create(ctx context.Context, operator *domain.Operator) error
 	Revoke(ctx context.Context, operatorID string) error
 }
+type IncidentCheckRepository interface {
+	Create(ctx context.Context, incidentID, checkID string) error
+}
 type Repository struct {
-	Incident IncidentRepository
-	Check    CheckRepository
-	Operator OperatorRepository
+	Incident      IncidentRepository
+	Check         CheckRepository
+	Operator      OperatorRepository
+	IncidentCheck IncidentCheckRepository
 }
 
 func NewRepository(db *gorm.DB) *Repository {
 	return &Repository{
-		Incident: NewIncidentRepository(db),
-		Check:    NewCheckRepository(db),
-		Operator: NewOperatorRepository(db),
+		Incident:      NewIncidentRepository(db),
+		Check:         NewCheckRepository(db),
+		Operator:      NewOperatorRepository(db),
+		IncidentCheck: NewIncidentCheckRepository(db),
 	}
 }

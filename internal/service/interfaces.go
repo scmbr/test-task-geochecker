@@ -17,7 +17,7 @@ type IncidentService interface {
 	GetStats(ctx context.Context, incidentID string, since time.Time) (int, error)
 }
 type CheckService interface {
-	Check(ctx context.Context, input *dto.CheckInput) error
+	Check(ctx context.Context, input *dto.CheckInput) ([]*dto.GetIncidentOutput, error)
 	GetById(ctx context.Context, id string) (*dto.GetCheckOutput, error)
 }
 type OperatorService interface {
@@ -30,11 +30,16 @@ type Service struct {
 	Check    CheckService
 	Operator OperatorService
 }
+type Deps struct {
+	Repos        *repository.Repository
+	RadiusMeters uint16
+	ApiKeySecret string
+}
 
-func NewService(repo *repository.Repository) *Service {
+func NewService(deps Deps) *Service {
 	return &Service{
-		Incident: NewIncidentService(repo.Incident),
-		Check:    NewCheckService(repo.Check),
-		Operator: NewOperatorService(repo.Operator),
+		Incident: NewIncidentService(deps.Repos.Incident),
+		Check:    NewCheckService(deps.Repos.Check, deps.Repos.Incident, deps.Repos.IncidentCheck, deps.RadiusMeters),
+		Operator: NewOperatorService(deps.Repos.Operator, deps.ApiKeySecret),
 	}
 }

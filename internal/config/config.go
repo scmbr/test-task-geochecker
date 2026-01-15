@@ -13,10 +13,12 @@ const (
 
 type (
 	Config struct {
-		Environment string
-		Postgres    PostgresConfig
-		Redis       RedisConfig
-		HTTP        HTTPConfig
+		Environment  string
+		Postgres     PostgresConfig
+		Redis        RedisConfig
+		HTTP         HTTPConfig
+		SearchRadius uint16 `mapstructure:"searchRadius"`
+		ApiKeySecret string
 	}
 	PostgresConfig struct {
 		Username string
@@ -62,7 +64,9 @@ func unmarshal(cfg *Config) error {
 	if err := viper.UnmarshalKey("redis", &cfg.Redis); err != nil {
 		return err
 	}
-
+	if err := viper.UnmarshalKey("searchRadius", &cfg.SearchRadius); err != nil {
+		return err
+	}
 	return nil
 }
 func setFromEnv(cfg *Config) {
@@ -70,6 +74,7 @@ func setFromEnv(cfg *Config) {
 	cfg.Postgres.Name = os.Getenv("POSTGRES_DB")
 	cfg.Postgres.Password = os.Getenv("POSTGRES_PASSWORD")
 	cfg.Redis.Password = os.Getenv("REDIS_PASSWORD")
+	cfg.ApiKeySecret = os.Getenv("API_KEY_SECRET")
 }
 func parseConfigFile(folder, env string) error {
 	viper.AddConfigPath(folder)
