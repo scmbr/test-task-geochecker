@@ -72,11 +72,9 @@ func (r *IncidentRepo) Update(ctx context.Context, id string, input models.Updat
 	if input.OperatorID != nil {
 		updates["operator_id"] = *input.OperatorID
 	}
-	if input.Latitude != nil {
-		updates["latitude"] = *input.Latitude
-	}
-	if input.Longitude != nil {
-		updates["longitude"] = *input.Longitude
+
+	if input.Latitude != nil && input.Longitude != nil {
+		updates["location"] = models.PointWKT(*input.Longitude, *input.Latitude)
 	}
 	if input.Radius != nil {
 		updates["radius"] = *input.Radius
