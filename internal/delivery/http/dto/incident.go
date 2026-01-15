@@ -31,7 +31,7 @@ type UpdateIncidentRequest struct {
 	Radius     *uint16  `json:"radius"`
 }
 type GetIncidentStatsByIdResponse struct {
-	IncidentID   string `json:"incident_id"`
-	UserCount    int    `json:"user_count"`
+	IncidentID   string    `json:"incident_id"`
+	UserCount    int       `json:"user_count"`
 	SinceMinutes time.Time `json:"since_minutes"`
 }
