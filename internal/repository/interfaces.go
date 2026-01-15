@@ -27,16 +27,21 @@ type OperatorRepository interface {
 	Create(ctx context.Context, operator *domain.Operator) error
 	Revoke(ctx context.Context, operatorID string) error
 }
+type IncidentCheckRepository interface {
+	Create(ctx context.Context, incidentID, checkID string) error
+}
 type Repository struct {
-	Incident IncidentRepository
-	Check    CheckRepository
-	Operator OperatorRepository
+	Incident      IncidentRepository
+	Check         CheckRepository
+	Operator      OperatorRepository
+	IncidentCheck IncidentCheckRepository
 }
 
 func NewRepository(db *gorm.DB) *Repository {
 	return &Repository{
-		Incident: NewIncidentRepository(db),
-		Check:    NewCheckRepository(db),
-		Operator: NewOperatorRepository(db),
+		Incident:      NewIncidentRepository(db),
+		Check:         NewCheckRepository(db),
+		Operator:      NewOperatorRepository(db),
+		IncidentCheck: NewIncidentCheckRepository(db),
 	}
 }
