@@ -1,23 +1,10 @@
-
-FROM golang:1.24 AS builder
-
+FROM golang:1.24
 WORKDIR /app
-
 
 COPY go.mod go.sum ./
 RUN go mod download
-
 COPY . .
-
-RUN go build -o main ./cmd/app
-
-FROM debian:bookworm-slim
-
-WORKDIR /app
-
-
-COPY --from=builder /app/main .
 
 EXPOSE 8000
 
-CMD ["./main"]
+CMD ["sh", "-c", "go run ./seed/seed.go && go run ./cmd/app"]
