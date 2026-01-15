@@ -11,6 +11,7 @@ import (
 	handler_dto "github.com/scmbr/test-task-geochecker/internal/delivery/http/dto"
 	"github.com/scmbr/test-task-geochecker/internal/service"
 	service_dto "github.com/scmbr/test-task-geochecker/internal/service/dto"
+	"github.com/scmbr/test-task-geochecker/pkg/logger"
 )
 
 func (h *Handler) initIncidentsRoutes(api *gin.RouterGroup) {
@@ -48,7 +49,17 @@ func (h *Handler) createIncident(c *gin.Context) {
 		Radius:     input.Radius,
 	})
 	if err != nil {
-		newResponse(c, http.StatusInternalServerError, err.Error())
+		logger.Error(
+			"error occurred while creating an incident",
+			err,
+			map[string]interface{}{
+				"operator_id": operatorID,
+				"longitude":   input.Longitude,
+				"latitude":    input.Latitude,
+				"radius":      input.Radius,
+			},
+		)
+		newResponse(c, http.StatusInternalServerError, "something went wrong")
 		return
 	}
 	c.Status(http.StatusCreated)
@@ -70,6 +81,14 @@ func (h *Handler) getAllIncidents(c *gin.Context) {
 		Offset: offset,
 	})
 	if err != nil {
+		logger.Error(
+			"error occurred while getting all incidents",
+			err,
+			map[string]interface{}{
+				"limit":  limit,
+				"offset": offset,
+			},
+		)
 		newResponse(c, http.StatusInternalServerError, "something went wrong")
 		return
 	}
@@ -97,6 +116,13 @@ func (h *Handler) getIncidentById(c *gin.Context) {
 	}
 	res, err := h.service.Incident.GetById(c.Request.Context(), id)
 	if err != nil {
+		logger.Error(
+			"error occurred while getting incident by id",
+			err,
+			map[string]interface{}{
+				"incident_id": id,
+			},
+		)
 		if errors.Is(err, service.ErrIncidentNotFound) {
 			newResponse(c, http.StatusNotFound, "incident not found")
 			return
@@ -131,6 +157,17 @@ func (h *Handler) updateIncidentById(c *gin.Context) {
 		Longitude:  input.Longitude,
 		Radius:     input.Radius,
 	}); err != nil {
+		logger.Error(
+			"error occurred while updating incident by id",
+			err,
+			map[string]interface{}{
+				"incident_id": id,
+				"operator_id": input.OperatorID,
+				"longitude":   input.Longitude,
+				"latitude":    input.Latitude,
+				"radius":      input.Radius,
+			},
+		)
 		if errors.Is(err, service.ErrIncidentNotFound) {
 			newResponse(c, http.StatusNotFound, "incident not found")
 			return
@@ -147,6 +184,13 @@ func (h *Handler) deleteIncidentById(c *gin.Context) {
 		return
 	}
 	if err := h.service.Incident.Delete(c.Request.Context(), id); err != nil {
+		logger.Error(
+			"error occurred while deleting incident by id",
+			err,
+			map[string]interface{}{
+				"incident_id": id,
+			},
+		)
 		if errors.Is(err, service.ErrIncidentNotFound) {
 			newResponse(c, http.StatusNotFound, "incident not found")
 			return
@@ -172,6 +216,13 @@ func (h *Handler) getIncidentStatsById(c *gin.Context) {
 	since := time.Now().Add(-time.Duration(sinceMinutes) * time.Minute)
 	count, err := h.service.Incident.GetStats(c.Request.Context(), id, since)
 	if err != nil {
+		logger.Error(
+			"error occurred while get incident's stats by id",
+			err,
+			map[string]interface{}{
+				"incident_id": id,
+			},
+		)
 		if errors.Is(err, service.ErrIncidentNotFound) {
 			newResponse(c, http.StatusNotFound, "incident not found")
 			return
