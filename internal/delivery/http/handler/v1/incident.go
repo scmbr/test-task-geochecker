@@ -206,7 +206,7 @@ func (h *Handler) getIncidentStatsById(c *gin.Context) {
 		newResponse(c, http.StatusBadRequest, "invalid id format")
 		return
 	}
-	sinceMinutesStr := c.DefaultQuery("since_minutes", "20")
+	sinceMinutesStr := c.DefaultQuery("since", "20")
 	sinceMinutes, err := strconv.Atoi(sinceMinutesStr)
 	if err != nil || sinceMinutes <= 0 {
 		newResponse(c, http.StatusBadRequest, "invalid since_minutes")
