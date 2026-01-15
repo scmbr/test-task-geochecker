@@ -11,13 +11,14 @@ import (
 )
 
 type CheckSvc struct {
-	checkRepo    repository.CheckRepository
-	incidentRepo repository.IncidentRepository
-	radius       uint16
+	checkRepo         repository.CheckRepository
+	incidentRepo      repository.IncidentRepository
+	incidentCheckRepo repository.IncidentCheckRepository
+	radius            uint16
 }
 
-func NewCheckService(checkRepo repository.CheckRepository, incidentRepo repository.IncidentRepository, radius uint16) *CheckSvc {
-	return &CheckSvc{checkRepo: checkRepo, incidentRepo: incidentRepo, radius: radius}
+func NewCheckService(checkRepo repository.CheckRepository, incidentRepo repository.IncidentRepository, incidentCheckRepo repository.IncidentCheckRepository, radius uint16) *CheckSvc {
+	return &CheckSvc{checkRepo: checkRepo, incidentRepo: incidentRepo, incidentCheckRepo: incidentCheckRepo, radius: radius}
 }
 func (s *CheckSvc) Check(ctx context.Context, input *dto.CheckInput) ([]*dto.GetIncidentOutput, error) {
 	check, err := domain.NewCheck(uuid.NewString(), input.UserID, input.Latitude, input.Longitude)
@@ -31,6 +32,11 @@ func (s *CheckSvc) Check(ctx context.Context, input *dto.CheckInput) ([]*dto.Get
 	res, err := s.incidentRepo.FindNearbyIncidents(ctx, input.Latitude, input.Longitude, s.radius)
 	if err != nil {
 		return nil, err
+	}
+	for _, incident := range res {
+		if err := s.incidentCheckRepo.Create(ctx, incident.IncidentID, check.CheckID); err != nil {
+			return nil, err
+		}
 	}
 	incidents := make([]*dto.GetIncidentOutput, len(res))
 	for idx, i := range res {

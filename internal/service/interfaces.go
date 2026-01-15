@@ -39,7 +39,7 @@ type Deps struct {
 func NewService(deps Deps) *Service {
 	return &Service{
 		Incident: NewIncidentService(deps.Repos.Incident),
-		Check:    NewCheckService(deps.Repos.Check, deps.Repos.Incident, deps.RadiusMeters),
+		Check:    NewCheckService(deps.Repos.Check, deps.Repos.Incident, deps.Repos.IncidentCheck, deps.RadiusMeters),
 		Operator: NewOperatorService(deps.Repos.Operator, deps.ApiKeySecret),
 	}
 }
