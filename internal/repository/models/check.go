@@ -22,7 +22,7 @@ func CheckDomainToModel(c *domain.Check) *Check {
 	}
 }
 func CheckModelToDomain(m *Check) (*domain.Check, error) {
-	lon, lat, err := ParsePointWKT(m.Location)
+	lon, lat, err := ParseEWKBPoint(m.Location)
 	if err != nil {
 		return nil, err
 	}
