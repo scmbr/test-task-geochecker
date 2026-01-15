@@ -107,10 +107,20 @@ func (r *IncidentRepo) Delete(ctx context.Context, id string) error {
 }
 func (r *IncidentRepo) CountUniqueUsers(ctx context.Context, incidentID string, since time.Time) (int, error) {
 	var count int64
-	res := r.db.WithContext(ctx).Table("checks").Where("incident_id = ?", incidentID).Where("created_at >= ?", since).Distinct("user_id").Count(&count)
-	if res.Error != nil {
-		return 0, fmt.Errorf("repo.CountUniqueUsers: %w", res.Error)
+
+	err := r.db.WithContext(ctx).
+		Table("checks").
+		Joins("JOIN incidents_checks ic ON ic.check_id = checks.check_id").
+		Where("ic.incident_id = ?", incidentID).
+		Where("checks.created_at >= ?", since).
+		Select("COUNT(DISTINCT checks.user_id)").
+		Scan(&count).
+		Error
+
+	if err != nil {
+		return 0, fmt.Errorf("repo.CountUniqueUsers: %w", err)
 	}
+
 	return int(count), nil
 }
 func (r *IncidentRepo) FindNearbyIncidents(ctx context.Context, lat, lon float64, radius uint16) ([]*domain.Incident, error) {
