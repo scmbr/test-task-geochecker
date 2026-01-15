@@ -6,6 +6,7 @@ import (
 
 	"github.com/scmbr/test-task-geochecker/internal/repository"
 	"github.com/scmbr/test-task-geochecker/internal/service/dto"
+	"github.com/scmbr/test-task-geochecker/pkg/cache"
 )
 
 type IncidentService interface {
@@ -34,11 +35,12 @@ type Deps struct {
 	Repos        *repository.Repository
 	RadiusMeters uint16
 	ApiKeySecret string
+	Cache        cache.Cache
 }
 
 func NewService(deps Deps) *Service {
 	return &Service{
-		Incident: NewIncidentService(deps.Repos.Incident),
+		Incident: NewIncidentService(deps.Repos.Incident, deps.Cache),
 		Check:    NewCheckService(deps.Repos.Check, deps.Repos.Incident, deps.Repos.IncidentCheck, deps.RadiusMeters),
 		Operator: NewOperatorService(deps.Repos.Operator, deps.ApiKeySecret),
 	}

@@ -2,7 +2,10 @@ package service
 
 import (
 	"context"
+	"crypto/sha256"
+	"encoding/json"
 	"errors"
+	"fmt"
 	"time"
 
 	"github.com/google/uuid"
@@ -10,14 +13,20 @@ import (
 	"github.com/scmbr/test-task-geochecker/internal/repository"
 	"github.com/scmbr/test-task-geochecker/internal/repository/models"
 	"github.com/scmbr/test-task-geochecker/internal/service/dto"
+	"github.com/scmbr/test-task-geochecker/pkg/cache"
+	"github.com/scmbr/test-task-geochecker/pkg/logger"
 )
 
 type IncidentSvc struct {
 	incidentRepo repository.IncidentRepository
+	cache        cache.Cache
 }
 
-func NewIncidentService(incidentRepo repository.IncidentRepository) *IncidentSvc {
-	return &IncidentSvc{incidentRepo: incidentRepo}
+func NewIncidentService(incidentRepo repository.IncidentRepository, cache cache.Cache) *IncidentSvc {
+	return &IncidentSvc{
+		incidentRepo: incidentRepo,
+		cache:        cache,
+	}
 }
 func (s *IncidentSvc) Create(ctx context.Context, input *dto.CreateIncidentInput) error {
 	incident, err := domain.NewIncident(uuid.NewString(), input.OperatorID, input.Latitude, input.Longitude, uint16(input.Radius))
@@ -32,6 +41,22 @@ func (s *IncidentSvc) Create(ctx context.Context, input *dto.CreateIncidentInput
 	return nil
 }
 func (s *IncidentSvc) GetAll(ctx context.Context, input *dto.GetAllIncidentsInput) (*dto.GetAllIncidentsOutput, error) {
+	filterJSON, err := json.Marshal(input)
+	if err != nil {
+		return nil, fmt.Errorf("failed to marshal filter: %w", err)
+	}
+	hash := sha256.Sum256(filterJSON)
+	cacheKey := fmt.Sprintf("incidents:%x", hash)
+	if cached, err := s.cache.Get(ctx, cacheKey); err == nil && cached != "" {
+		var incidents dto.GetAllIncidentsOutput
+		if jsonErr := json.Unmarshal([]byte(cached), &incidents); jsonErr == nil {
+			return &incidents, nil
+		} else {
+			logger.Error("failed to unmarshal cached data for key ", jsonErr, map[string]interface{}{
+				"cache_key": cacheKey,
+			})
+		}
+	}
 	res, total, err := s.incidentRepo.GetAll(ctx, input.Offset, input.Limit)
 	if err != nil {
 		return nil, err
@@ -46,6 +71,14 @@ func (s *IncidentSvc) GetAll(ctx context.Context, input *dto.GetAllIncidentsInpu
 			Radius:     i.Radius,
 			CreatedAt:  i.CreatedAt,
 		}
+	}
+	payload, err := json.Marshal(dto.GetAllIncidentsOutput{
+		Total:     total,
+		Incidents: incidents})
+	if err != nil {
+		logger.Error("failed to marshal payload", err)
+	} else if err := s.cache.Set(ctx, cacheKey, string(payload), time.Minute*2); err != nil {
+		logger.Error("failed to set cache", err)
 	}
 	return &dto.GetAllIncidentsOutput{
 		Total:     total,
