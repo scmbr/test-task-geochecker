@@ -28,9 +28,6 @@ func (s *OperatorSvc) Create(ctx context.Context, input *dto.CreateOperatorInput
 		return err
 	}
 	if err := s.operatorRepo.Create(ctx, operator); err != nil {
-		if errors.Is(err, repository.ErrAlreadyExists) {
-			return ErrOperatorAlreadyExists
-		}
 		return err
 	}
 	return nil

@@ -21,9 +21,6 @@ func NewIncidentRepository(db *gorm.DB) *IncidentRepo {
 func (r *IncidentRepo) Create(ctx context.Context, incident *domain.Incident) error {
 	incidentModel := models.IncidentDomainToModel(incident)
 	if err := r.db.WithContext(ctx).Create(&incidentModel).Error; err != nil {
-		if err == gorm.ErrDuplicatedKey {
-			return ErrAlreadyExists
-		}
 		return fmt.Errorf("repo.Create: %w", err)
 	}
 	return nil

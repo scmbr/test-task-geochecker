@@ -18,9 +18,6 @@ func NewCheckRepository(db *gorm.DB) *CheckRepo {
 func (r *CheckRepo) Create(ctx context.Context, check *domain.Check) error {
 	checkModel := models.CheckDomainToModel(check)
 	if err := r.db.WithContext(ctx).Create(checkModel).Error; err != nil {
-		if err == gorm.ErrDuplicatedKey {
-			return ErrAlreadyExists
-		}
 		return err
 	}
 	return nil

@@ -35,9 +35,6 @@ func (r *OperatorRepo) GetActiveByAPIKeyHash(ctx context.Context, apiKeyHash str
 }
 func (r *OperatorRepo) Create(ctx context.Context, operator *domain.Operator) error {
 	if err := r.db.WithContext(ctx).Create(&operator).Error; err != nil {
-		if err == gorm.ErrDuplicatedKey {
-			return ErrAlreadyExists
-		}
 		return err
 	}
 	return nil
