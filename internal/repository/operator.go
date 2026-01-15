@@ -5,6 +5,7 @@ import (
 	"time"
 
 	"github.com/scmbr/test-task-geochecker/internal/domain"
+	"github.com/scmbr/test-task-geochecker/internal/repository/models"
 	"gorm.io/gorm"
 )
 
@@ -43,6 +44,7 @@ func (r *OperatorRepo) Create(ctx context.Context, operator *domain.Operator) er
 }
 func (r *OperatorRepo) Revoke(ctx context.Context, operatorID string) error {
 	res := r.db.WithContext(ctx).
+		Model(&models.Operator{}).
 		Where("operator_id = ?", operatorID).
 		Where("revoked_at IS NULL").
 		Update("revoked_at", time.Now())

@@ -80,7 +80,7 @@ func (r *IncidentRepo) Update(ctx context.Context, id string, input models.Updat
 		updates["radius"] = *input.Radius
 	}
 
-	res := r.db.WithContext(ctx).Where("incident_id = ?", id).Updates(updates)
+	res := r.db.WithContext(ctx).Model(&models.Incident{}).Where("incident_id = ?", id).Updates(updates)
 
 	if res.RowsAffected == 0 {
 		return ErrNotFound
@@ -93,7 +93,7 @@ func (r *IncidentRepo) Update(ctx context.Context, id string, input models.Updat
 }
 
 func (r *IncidentRepo) Delete(ctx context.Context, id string) error {
-	res := r.db.WithContext(ctx).Where("incident_id = ?", id).Update("deleted_at", time.Now())
+	res := r.db.WithContext(ctx).Model(&models.Incident{}).Where("incident_id = ?", id).Update("deleted_at", time.Now())
 	if res.RowsAffected == 0 {
 		return ErrNotFound
 	}
