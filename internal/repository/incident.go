@@ -2,6 +2,7 @@ package repository
 
 import (
 	"context"
+	"fmt"
 	"time"
 
 	"github.com/scmbr/test-task-geochecker/internal/domain"
@@ -23,7 +24,7 @@ func (r *IncidentRepo) Create(ctx context.Context, incident *domain.Incident) er
 		if err == gorm.ErrDuplicatedKey {
 			return ErrAlreadyExists
 		}
-		return err
+		return fmt.Errorf("repo.Create: %w", err)
 	}
 	return nil
 }
@@ -33,10 +34,10 @@ func (r *IncidentRepo) GetAll(ctx context.Context, offset, limit int) ([]*domain
 	q := r.db.WithContext(ctx).Model(&models.Incident{}).Where("deleted_at IS NULL")
 
 	if err := q.Count(&total).Error; err != nil {
-		return nil, 0, err
+		return nil, 0, fmt.Errorf("repo.GetAll: %w", err)
 	}
 	if err := q.Order("created_at DESC").Limit(limit).Offset(offset).Find(&incidents).Error; err != nil {
-		return nil, 0, err
+		return nil, 0, fmt.Errorf("repo.GetAll: %w", err)
 	}
 	incidentsDomain := make([]*domain.Incident, len(incidents))
 	for idx := range incidentsDomain {
@@ -55,7 +56,7 @@ func (r *IncidentRepo) GetById(ctx context.Context, id string) (*domain.Incident
 		return nil, ErrNotFound
 	}
 	if res.Error != nil {
-		return nil, res.Error
+		return nil, fmt.Errorf("repo.GetById: %w", res.Error)
 	}
 	incidentDomain, err := models.IncidentModelToDomain(&incident)
 	if err != nil {
@@ -87,7 +88,7 @@ func (r *IncidentRepo) Update(ctx context.Context, id string, input models.Updat
 		return ErrNotFound
 	}
 	if res.Error != nil {
-		return res.Error
+		return fmt.Errorf("repo.Update: %w", res.Error)
 	}
 
 	return nil
@@ -99,7 +100,7 @@ func (r *IncidentRepo) Delete(ctx context.Context, id string) error {
 		return ErrNotFound
 	}
 	if res.Error != nil {
-		return res.Error
+		return fmt.Errorf("repo.Delete: %w", res.Error)
 	}
 
 	return nil
@@ -108,7 +109,7 @@ func (r *IncidentRepo) CountUniqueUsers(ctx context.Context, incidentID string, 
 	var count int64
 	res := r.db.WithContext(ctx).Table("checks").Where("incident_id = ?", incidentID).Where("created_at >= ?", since).Distinct("user_id").Count(&count)
 	if res.Error != nil {
-		return 0, res.Error
+		return 0, fmt.Errorf("repo.CountUniqueUsers: %w", res.Error)
 	}
 	return int(count), nil
 }
@@ -119,7 +120,7 @@ func (r *IncidentRepo) FindNearbyIncidents(ctx context.Context, lat, lon float64
 	if err := r.db.WithContext(ctx).
 		Where("ST_DWithin(location, ST_GeomFromText(?, 4326)::geography, ? + radius)", point, radiusMeters).
 		Find(&incidents).Error; err != nil {
-		return nil, err
+		return nil, fmt.Errorf("repo.FindNearbyIncidents: %w", err)
 	}
 	incidentsDomain := make([]*domain.Incident, len(incidents))
 	for idx := range incidentsDomain {
