@@ -5,6 +5,7 @@ import (
 	"net/http"
 
 	"github.com/gin-gonic/gin"
+	"github.com/scmbr/test-task-geochecker/pkg/logger"
 )
 
 const (
@@ -20,6 +21,13 @@ func (h *Handler) operatorIdentity(c *gin.Context) {
 	}
 	operator, err := h.service.Operator.ValidateAPIKey(c, apiKey)
 	if err != nil {
+		logger.Error(
+			"error occurred while validating an api key",
+			err,
+			map[string]interface{}{
+				"api_key": maskString(apiKey),
+			},
+		)
 		newResponse(c, http.StatusUnauthorized, err.Error())
 		return
 	}
