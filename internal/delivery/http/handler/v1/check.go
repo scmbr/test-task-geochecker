@@ -6,6 +6,7 @@ import (
 	"github.com/gin-gonic/gin"
 	handler_dto "github.com/scmbr/test-task-geochecker/internal/delivery/http/dto"
 	service_dto "github.com/scmbr/test-task-geochecker/internal/service/dto"
+	"github.com/scmbr/test-task-geochecker/pkg/logger"
 )
 
 func (h *Handler) initCheckRoutes(api *gin.RouterGroup) {
@@ -26,6 +27,15 @@ func (h *Handler) createCheck(c *gin.Context) {
 		Longitude: input.Longitude,
 	})
 	if err != nil {
+		logger.Error(
+			"error occurred while creating a check",
+			err,
+			map[string]interface{}{
+				"user_id":   input.UserID,
+				"longitude": input.Longitude,
+				"latitude":  input.Latitude,
+			},
+		)
 		newResponse(c, http.StatusInternalServerError, "something went wrong")
 		return
 	}
