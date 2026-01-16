@@ -9,6 +9,7 @@ import (
 	handler_dto "github.com/scmbr/test-task-geochecker/internal/delivery/http/dto"
 	"github.com/scmbr/test-task-geochecker/internal/service"
 	service_dto "github.com/scmbr/test-task-geochecker/internal/service/dto"
+	"github.com/scmbr/test-task-geochecker/pkg/logger"
 )
 
 func (h *Handler) initOperatorRoutes(api *gin.RouterGroup) {
@@ -28,6 +29,14 @@ func (h *Handler) createOperator(c *gin.Context) {
 		Name:   input.Name,
 		APIKey: input.APIKey,
 	}); err != nil {
+		logger.Error(
+			"error occurred while creating an operator",
+			err,
+			map[string]interface{}{
+				"name":    input.Name,
+				"api_key": maskString(input.APIKey),
+			},
+		)
 		newResponse(c, http.StatusInternalServerError, "something went wrong")
 		return
 	}
@@ -45,6 +54,14 @@ func (h *Handler) revokeOperator(c *gin.Context) {
 		return
 	}
 	if err := h.service.Operator.Revoke(c.Request.Context(), id); err != nil {
+		logger.Error(
+			"error occurred while revoking an operator",
+			err,
+			map[string]interface{}{
+				"operator_id": id,
+				"caller_id":   callerID,
+			},
+		)
 		if errors.Is(err, service.ErrOperatorNotFound) {
 			newResponse(c, http.StatusNotFound, "operator not found")
 			return

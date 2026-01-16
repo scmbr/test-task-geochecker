@@ -14,6 +14,7 @@ import (
 	"github.com/scmbr/test-task-geochecker/internal/repository"
 	"github.com/scmbr/test-task-geochecker/internal/server"
 	"github.com/scmbr/test-task-geochecker/internal/service"
+	"github.com/scmbr/test-task-geochecker/pkg/cache/redis"
 	"github.com/scmbr/test-task-geochecker/pkg/database/postgres"
 	"github.com/scmbr/test-task-geochecker/pkg/logger"
 )
@@ -38,13 +39,28 @@ func Run(configsDir string) {
 		os.Exit(1)
 	}
 	logger.Info("database connected successfully")
+	redisClient, err := redis.NewRedis(redis.Config{
+		Host:     cfg.Redis.Host,
+		Port:     cfg.Redis.Port,
+		Password: cfg.Redis.Password,
+	})
+	if err != nil {
+		logger.Error("failed to initialize redis:%s", err)
+	}
+	cacheProvider := redis.NewRedisCache(redisClient)
 	repository := repository.NewRepository(db)
 	service := service.NewService(service.Deps{
 		Repos:        repository,
 		RadiusMeters: cfg.SearchRadius,
 		ApiKeySecret: cfg.ApiKeySecret,
+		Cache:        cacheProvider,
 	})
-	handler := handler.NewHandler(service)
+	sqlDB, err := db.DB()
+	if err != nil {
+		logger.Error("failed to get generic database interface: %v", err)
+		os.Exit(1)
+	}
+	handler := handler.NewHandler(service, sqlDB, redisClient)
 	server := server.NewServer(cfg, handler.Init())
 	go func() {
 		if err := server.Run(); !errors.Is(err, http.ErrServerClosed) {
