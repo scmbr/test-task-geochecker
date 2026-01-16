@@ -51,7 +51,14 @@ func Run(configsDir string) {
 		logger.Error("failed to initialize redis:%s", err)
 	}
 	cacheProvider := cache.NewRedisCache(redisClient)
-	queueProvider := queue.NewRedisQueue(redisClient, cfg.Redis.StreamKey, cfg.Redis.Group, "worker-1", cfg.Redis.MaxAttempts, cfg.Redis.DeadLetterStream)
+	consumerName := "worker-1"
+	queueProvider := queue.NewRedisQueue(redisClient, cfg.Redis.StreamKey, cfg.Redis.Group, consumerName, cfg.Redis.MaxAttempts, cfg.Redis.DeadLetterStream)
+	if err := queueProvider.Init(context.Background()); err != nil {
+		logger.Error("failed to initialize queue:", err)
+	}
+	worker := worker.NewWorker(context.Background(), queueProvider, consumerName)
+	logger.Info("outbox worker is running")
+	go worker.Run()
 	repository := repository.NewRepository(db)
 	service := service.NewService(service.Deps{
 		Repos:        repository,
