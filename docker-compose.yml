@@ -34,6 +34,7 @@ services:
       POSTGRES_DB: "${POSTGRES_DB:-geochecker}"
       REDIS_PASSWORD: "${REDIS_PASSWORD:-geochecker}"
       API_KEY_SECRET: "${API_KEY_SECRET:-geochecker}"
+      WEBHOOK_URL: "${WEBHOOK_URL:-}"
     volumes:
       - ./backend/.env:/app/.env
       - ./configs:/app/configs:ro
