@@ -76,9 +76,9 @@ func (s *IncidentSvc) GetAll(ctx context.Context, input *dto.GetAllIncidentsInpu
 		Total:     total,
 		Incidents: incidents})
 	if err != nil {
-		logger.Error("failed to marshal payload", err)
+		logger.Error("failed to marshal payload", err, nil)
 	} else if err := s.cache.Set(ctx, cacheKey, string(payload), time.Minute*2); err != nil {
-		logger.Error("failed to set cache", err)
+		logger.Error("failed to set cache", err, nil)
 	}
 	return &dto.GetAllIncidentsOutput{
 		Total:     total,

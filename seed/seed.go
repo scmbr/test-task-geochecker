@@ -62,7 +62,7 @@ func main() {
 	if secret == "" {
 		secret = "geochecker"
 	}
-	logger.Info(secret)
+	logger.Info(secret, nil)
 	for _, op := range operators {
 		id := uuid.New()
 		hash := hasher.HashAPIKey(

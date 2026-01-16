@@ -11,4 +11,8 @@ redis:
   host: redis
   port: 6379
   cacheTTL: 5m
+  streamKey: webhook_tasks
+  group: webhook_workers
+  maxAttempts: 5
+  deadLetterStream: dead_webhook_tasks
 searchRadius: 100

@@ -19,6 +19,7 @@ type (
 		HTTP         HTTPConfig
 		SearchRadius uint16 `mapstructure:"searchRadius"`
 		ApiKeySecret string
+		WebhookURL   string
 	}
 	PostgresConfig struct {
 		Username string
@@ -29,10 +30,15 @@ type (
 		Password string
 	}
 	RedisConfig struct {
-		Host     string        `mapstructure:"host"`
-		Port     string        `mapstructure:"port"`
-		CacheTTL time.Duration `mapstructure:"cacheTTL"`
-		Password string
+		Host             string        `mapstructure:"host"`
+		Port             string        `mapstructure:"port"`
+		CacheTTL         time.Duration `mapstructure:"cacheTTL"`
+		Password         string
+		StreamKey        string `mapstructure:"streamKey"`
+		Group            string `mapstructure:"group"`
+		Consumer         string `mapstructure:"consumer"`
+		MaxAttempts      uint   `mapstructure:"maxAttempts"`
+		DeadLetterStream string `mapstructure:"deadLetterStream"`
 	}
 	HTTPConfig struct {
 		Host               string        `mapstructure:"host"`
@@ -75,6 +81,7 @@ func setFromEnv(cfg *Config) {
 	cfg.Postgres.Password = os.Getenv("POSTGRES_PASSWORD")
 	cfg.Redis.Password = os.Getenv("REDIS_PASSWORD")
 	cfg.ApiKeySecret = os.Getenv("API_KEY_SECRET")
+	cfg.WebhookURL = os.Getenv("WEBHOOK_URL")
 }
 func parseConfigFile(folder, env string) error {
 	viper.AddConfigPath(folder)
