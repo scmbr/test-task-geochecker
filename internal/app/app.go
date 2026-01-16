@@ -14,9 +14,10 @@ import (
 	"github.com/scmbr/test-task-geochecker/internal/repository"
 	"github.com/scmbr/test-task-geochecker/internal/server"
 	"github.com/scmbr/test-task-geochecker/internal/service"
-	"github.com/scmbr/test-task-geochecker/pkg/cache/redis"
+	"github.com/scmbr/test-task-geochecker/pkg/cache"
 	"github.com/scmbr/test-task-geochecker/pkg/database/postgres"
 	"github.com/scmbr/test-task-geochecker/pkg/logger"
+	"github.com/scmbr/test-task-geochecker/pkg/redis"
 )
 
 func Run(configsDir string) {
@@ -47,7 +48,7 @@ func Run(configsDir string) {
 	if err != nil {
 		logger.Error("failed to initialize redis:%s", err)
 	}
-	cacheProvider := redis.NewRedisCache(redisClient)
+	cacheProvider := cache.NewRedisCache(redisClient)
 	repository := repository.NewRepository(db)
 	service := service.NewService(service.Deps{
 		Repos:        repository,
