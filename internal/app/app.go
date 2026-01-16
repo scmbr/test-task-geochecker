@@ -19,6 +19,7 @@ import (
 	"github.com/scmbr/test-task-geochecker/pkg/logger"
 	"github.com/scmbr/test-task-geochecker/pkg/queue"
 	"github.com/scmbr/test-task-geochecker/pkg/redis"
+	"github.com/scmbr/test-task-geochecker/worker"
 )
 
 func Run(configsDir string) {
@@ -65,6 +66,9 @@ func Run(configsDir string) {
 		logger.Error("failed to get generic database interface: %v", err)
 		os.Exit(1)
 	}
+	worker := worker.NewWorker(context.Background(), queueProvider)
+	logger.Info("outbox worker is running")
+	go worker.Run()
 	handler := handler.NewHandler(service, sqlDB, redisClient)
 	server := server.NewServer(cfg, handler.Init())
 	go func() {
