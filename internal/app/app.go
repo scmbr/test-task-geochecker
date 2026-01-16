@@ -60,7 +60,7 @@ func Run(configsDir string) {
 		logger.Error("failed to get generic database interface: %v", err)
 		os.Exit(1)
 	}
-	handler := handler.NewHandler(service, sqlDB)
+	handler := handler.NewHandler(service, sqlDB, redisClient)
 	server := server.NewServer(cfg, handler.Init())
 	go func() {
 		if err := server.Run(); !errors.Is(err, http.ErrServerClosed) {

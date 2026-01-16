@@ -4,6 +4,7 @@ import (
 	"database/sql"
 
 	"github.com/gin-gonic/gin"
+	"github.com/redis/go-redis/v9"
 	v1 "github.com/scmbr/test-task-geochecker/internal/delivery/http/handler/v1"
 	"github.com/scmbr/test-task-geochecker/internal/service"
 )
@@ -11,12 +12,14 @@ import (
 type Handler struct {
 	service *service.Service
 	db      *sql.DB
+	redis   *redis.Client
 }
 
-func NewHandler(service *service.Service, db *sql.DB) *Handler {
+func NewHandler(service *service.Service, db *sql.DB, redis *redis.Client) *Handler {
 	return &Handler{
 		service: service,
 		db:      db,
+		redis:   redis,
 	}
 }
 
@@ -27,7 +30,7 @@ func (h *Handler) Init() *gin.Engine {
 	return router
 }
 func (h *Handler) initAPI(router *gin.Engine) {
-	handlerV1 := v1.NewHandler(h.service, h.db)
+	handlerV1 := v1.NewHandler(h.service, h.db, h.redis)
 	api := router.Group("/api")
 	{
 		handlerV1.Init(api)
