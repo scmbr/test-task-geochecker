@@ -15,12 +15,14 @@ import (
 type Worker struct {
 	queue queue.Queue
 	ctx   context.Context
+	name  string
 }
 
-func NewWorker(ctx context.Context, q queue.Queue) *Worker {
+func NewWorker(ctx context.Context, q queue.Queue, name string) *Worker {
 	return &Worker{
 		queue: q,
 		ctx:   ctx,
+		name:  name,
 	}
 }
 
