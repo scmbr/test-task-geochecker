@@ -4,6 +4,7 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
+	"strings"
 	"time"
 
 	"github.com/redis/go-redis/v9"
@@ -27,6 +28,23 @@ func NewRedisQueue(client *redis.Client, streamKey, group, consumer string, maxA
 		maxAttempts:      maxAttempts,
 		deadLetterStream: deadLetterStream,
 	}
+}
+func (r *RedisQueue) Init(ctx context.Context) error {
+	err := r.client.XGroupCreateMkStream(
+		ctx,
+		r.streamKey,
+		r.group,
+		"$",
+	).Err()
+
+	if err != nil {
+		if strings.Contains(err.Error(), "BUSYGROUP") {
+			return nil
+		}
+		return fmt.Errorf("failed to create consumer group: %w", err)
+	}
+
+	return nil
 }
 
 func (r *RedisQueue) Enqueue(ctx context.Context, task Task) error {

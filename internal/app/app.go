@@ -26,7 +26,7 @@ func Run(configsDir string) {
 	logger.Init()
 	cfg, err := config.Init(configsDir)
 	if err != nil {
-		logger.Error("config initialization error", err)
+		logger.Error("config initialization error", err, nil)
 		os.Exit(1)
 	}
 	db, err := postgres.NewPostgresDB(postgres.Config{
@@ -38,26 +38,26 @@ func Run(configsDir string) {
 		SSLMode:  cfg.Postgres.SSLMode,
 	})
 	if err != nil {
-		logger.Error("database initialization error", err)
+		logger.Error("database initialization error", err, nil)
 		os.Exit(1)
 	}
-	logger.Info("database connected successfully")
+	logger.Info("database connected successfully", nil)
 	redisClient, err := redis.NewRedis(redis.Config{
 		Host:     cfg.Redis.Host,
 		Port:     cfg.Redis.Port,
 		Password: cfg.Redis.Password,
 	})
 	if err != nil {
-		logger.Error("failed to initialize redis:%s", err)
+		logger.Error("failed to initialize redis:", err, nil)
 	}
 	cacheProvider := cache.NewRedisCache(redisClient)
 	consumerName := "worker-1"
 	queueProvider := queue.NewRedisQueue(redisClient, cfg.Redis.StreamKey, cfg.Redis.Group, consumerName, cfg.Redis.MaxAttempts, cfg.Redis.DeadLetterStream)
 	if err := queueProvider.Init(context.Background()); err != nil {
-		logger.Error("failed to initialize queue:", err)
+		logger.Error("failed to initialize queue:", err, nil)
 	}
 	worker := worker.NewWorker(context.Background(), queueProvider, consumerName)
-	logger.Info("outbox worker is running")
+	logger.Info("outbox worker is running", nil)
 	go worker.Run()
 	repository := repository.NewRepository(db)
 	service := service.NewService(service.Deps{
@@ -70,21 +70,19 @@ func Run(configsDir string) {
 	})
 	sqlDB, err := db.DB()
 	if err != nil {
-		logger.Error("failed to get generic database interface: %v", err)
+		logger.Error("failed to get generic database interface: %v", err, nil)
 		os.Exit(1)
 	}
-	worker := worker.NewWorker(context.Background(), queueProvider)
-	logger.Info("outbox worker is running")
-	go worker.Run()
+
 	handler := handler.NewHandler(service, sqlDB, redisClient)
 	server := server.NewServer(cfg, handler.Init())
 	go func() {
 		if err := server.Run(); !errors.Is(err, http.ErrServerClosed) {
-			logger.Error("error occurred while running server", err)
+			logger.Error("error occurred while running server", err, nil)
 		}
 	}()
 
-	logger.Info("server started")
+	logger.Info("server started", nil)
 	quit := make(chan os.Signal, 1)
 	signal.Notify(quit, syscall.SIGTERM, syscall.SIGINT)
 	<-quit
@@ -93,7 +91,7 @@ func Run(configsDir string) {
 	defer shutdown()
 
 	if err := server.Stop(ctx); err != nil {
-		logger.Error("failed to stop server", err)
+		logger.Error("failed to stop server", err, nil)
 	}
 
 }
