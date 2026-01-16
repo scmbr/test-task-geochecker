@@ -17,6 +17,7 @@ import (
 	"github.com/scmbr/test-task-geochecker/pkg/cache"
 	"github.com/scmbr/test-task-geochecker/pkg/database/postgres"
 	"github.com/scmbr/test-task-geochecker/pkg/logger"
+	"github.com/scmbr/test-task-geochecker/pkg/queue"
 	"github.com/scmbr/test-task-geochecker/pkg/redis"
 )
 
@@ -49,12 +50,15 @@ func Run(configsDir string) {
 		logger.Error("failed to initialize redis:%s", err)
 	}
 	cacheProvider := cache.NewRedisCache(redisClient)
+	queueProvider := queue.NewRedisQueue(redisClient, cfg.Redis.StreamKey, cfg.Redis.Group, "worker-1", cfg.Redis.MaxAttempts, cfg.Redis.DeadLetterStream)
 	repository := repository.NewRepository(db)
 	service := service.NewService(service.Deps{
 		Repos:        repository,
 		RadiusMeters: cfg.SearchRadius,
 		ApiKeySecret: cfg.ApiKeySecret,
 		Cache:        cacheProvider,
+		Queue:        queueProvider,
+		WebhookURL:   cfg.WebhookURL,
 	})
 	sqlDB, err := db.DB()
 	if err != nil {
