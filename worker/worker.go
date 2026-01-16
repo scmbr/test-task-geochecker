@@ -61,6 +61,12 @@ func (w *Worker) Run() {
 }
 
 func (w *Worker) handleTask(task queue.Task) error {
+	logger.Debug("handling task:", map[string]interface{}{
+		"task_id":    task.TaskID,
+		"payload":    task.Payload,
+		"target_url": task.TargetURL,
+		"attempts":   task.Attempts,
+	})
 	req, err := http.NewRequestWithContext(w.ctx, http.MethodPost, task.TargetURL, bytes.NewBuffer([]byte(task.Payload)))
 	if err != nil {
 		return err

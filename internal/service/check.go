@@ -62,6 +62,12 @@ func (s *CheckSvc) Check(ctx context.Context, input *dto.CheckInput) ([]*dto.Get
 						"attempts":   task.Attempts,
 					})
 				}
+				logger.Debug("putting task in queue:", map[string]interface{}{
+					"task_id":    task.TaskID,
+					"payload":    task.Payload,
+					"target_url": task.TargetURL,
+					"attempts":   task.Attempts,
+				})
 			}(queue.Task{
 				TaskID:    taskID,
 				Payload:   string(payload),
