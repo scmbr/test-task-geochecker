@@ -48,7 +48,7 @@ func (r *IncidentRepo) GetAll(ctx context.Context, offset, limit int) ([]*domain
 }
 func (r *IncidentRepo) GetById(ctx context.Context, id string) (*domain.Incident, error) {
 	var incident models.Incident
-	res := r.db.WithContext(ctx).Where("incident_id = ?", id).First(&incident)
+	res := r.db.WithContext(ctx).Where("incident_id = ? AND deleted_at IS NULL", id).First(&incident)
 	if res.Error == gorm.ErrRecordNotFound {
 		return nil, ErrNotFound
 	}
@@ -77,7 +77,7 @@ func (r *IncidentRepo) Update(ctx context.Context, id string, input models.Updat
 		updates["radius"] = *input.Radius
 	}
 
-	res := r.db.WithContext(ctx).Model(&models.Incident{}).Where("incident_id = ?", id).Updates(updates)
+	res := r.db.WithContext(ctx).Model(&models.Incident{}).Where("incident_id = ? AND deleted_at IS NULL", id).Updates(updates)
 
 	if res.RowsAffected == 0 {
 		return ErrNotFound
@@ -123,7 +123,7 @@ func (r *IncidentRepo) FindNearbyIncidents(ctx context.Context, lat, lon float64
 	point := models.PointWKT(lon, lat)
 	radiusMeters := float64(radius)
 	if err := r.db.WithContext(ctx).
-		Where("ST_DWithin(location, ST_GeomFromText(?, 4326)::geography, ? + radius)", point, radiusMeters).
+		Where("ST_DWithin(location, ST_GeomFromText(?, 4326)::geography, ? + radius) AND deleted_at IS NULL", point, radiusMeters).
 		Find(&incidents).Error; err != nil {
 		return nil, fmt.Errorf("repo.FindNearbyIncidents: %w", err)
 	}
