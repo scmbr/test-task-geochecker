@@ -96,6 +96,7 @@ func (h *Handler) getAllIncidents(c *gin.Context) {
 	for idx, i := range res.Incidents {
 		incidents[idx] = handler_dto.GetIncidentResponse{
 			IncidentID: i.ID,
+			OperatorID: i.OperatorID,
 			Latitude:   i.Latitude,
 			Longitude:  i.Longitude,
 			Radius:     i.Radius,
@@ -132,6 +133,7 @@ func (h *Handler) getIncidentById(c *gin.Context) {
 	}
 	incident := handler_dto.GetIncidentResponse{
 		IncidentID: res.ID,
+		OperatorID: res.OperatorID,
 		Latitude:   res.Latitude,
 		Longitude:  res.Longitude,
 		Radius:     res.Radius,
