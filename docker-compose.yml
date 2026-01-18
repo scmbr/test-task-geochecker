@@ -36,7 +36,6 @@ services:
       API_KEY_SECRET: "${API_KEY_SECRET:-geochecker}"
       WEBHOOK_URL: "${WEBHOOK_URL:-}"
     volumes:
-      - ./backend/.env:/app/.env
       - ./configs:/app/configs:ro
   redis:
     image: redis:7
