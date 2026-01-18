@@ -9,7 +9,6 @@ import (
 	"github.com/google/uuid"
 	_ "github.com/lib/pq"
 	"github.com/scmbr/test-task-geochecker/pkg/hasher"
-	"github.com/scmbr/test-task-geochecker/pkg/logger"
 )
 
 func main() {
@@ -62,7 +61,6 @@ func main() {
 	if secret == "" {
 		secret = "geochecker"
 	}
-	logger.Info(secret, nil)
 	for _, op := range operators {
 		id := uuid.New()
 		hash := hasher.HashAPIKey(
