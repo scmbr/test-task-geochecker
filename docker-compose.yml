@@ -9,7 +9,7 @@ services:
     ports:
       - "5432:5432"
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U scmbr -d geochecker"]
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-scmbr} -d ${POSTGRES_DB:-geochecker}"]
       interval: 10s
       timeout: 5s
       retries: 10
@@ -62,7 +62,7 @@ services:
       POSTGRES_USER: "${POSTGRES_USER:-scmbr}"
       POSTGRES_PASSWORD: "${POSTGRES_PASSWORD:-geochecker}"
       POSTGRES_DB: "${POSTGRES_DB:-geochecker}"
-    command: ["-path", "/migrations", "-database", "postgres://${POSTGRES_USER:-scmbr}:${POSTGRES_PASSWORD:-geochecker}@db:5432/${POSTGRES_DB:-geochecker}?sslmode=disable", "up", "3"]
+    command: ["-path", "/migrations", "-database", "postgres://${POSTGRES_USER:-scmbr}:${POSTGRES_PASSWORD:-geochecker}@db:5432/${POSTGRES_DB:-geochecker}?sslmode=disable", "up"]
     links: 
       - db
     depends_on:
