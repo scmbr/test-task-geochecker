@@ -2,7 +2,7 @@
   "info": {
     "_postman_id": "f449db9a-80b5-4dd0-82a1-0f3c863df9c5",
     "name": "Geochecker",
-    "description": "# 🚀 Get started here\n\nThis template guides you through CRUD operations (GET, POST, PUT, DELETE), variables, and tests.\n\n## 🔖 **How to use this template**\n\n#### **Step 1: Send requests**\n\nRESTful APIs allow you to perform CRUD operations using the POST, GET, PUT, and DELETE HTTP methods.\n\nThis collection contains each of these [request](https://learning.postman.com/docs/sending-requests/requests/) types. Open each request and click \"Send\" to see what happens.\n\n#### **Step 2: View responses**\n\nObserve the response tab for status code (200 OK), response time, and size.\n\n#### **Step 3: Send new Body data**\n\nUpdate or add new data in \"Body\" in the POST request. Typically, Body data is also used in PUT request.\n\n```\n{\n    \"name\": \"Add your name in the body\"\n}\n\n ```\n\n#### **Step 4: Update the variable**\n\nVariables enable you to store and reuse values in Postman. We have created a [variable](https://learning.postman.com/docs/sending-requests/variables/) called `base_url` with the sample request [https://postman-api-learner.glitch.me](https://postman-api-learner.glitch.me). Replace it with your API endpoint to customize this collection.\n\n#### **Step 5: Add tests in the \"Scripts\" tab**\n\nAdding tests to your requests can help you confirm that your API is working as expected. You can write test scripts in JavaScript and view the output in the \"Test Results\" tab.\n\n<img src=\"https://content.pstmn.io/fa30ea0a-373d-4545-a668-e7b283cca343/aW1hZ2UucG5n\" alt=\"\" height=\"1530\" width=\"2162\">\n\n## 💪 Pro tips\n\n- Use folders to group related requests and organize the collection.\n    \n- Add more [scripts](https://learning.postman.com/docs/writing-scripts/intro-to-scripts/) to verify if the API works as expected and execute workflows.\n    \n\n## 💡Related templates\n\n[API testing basics](https://go.postman.co/redirect/workspace?type=personal&collectionTemplateId=e9a37a28-055b-49cd-8c7e-97494a21eb54&sourceTemplateId=ddb19591-3097-41cf-82af-c84273e56719)  \n[API documentation](https://go.postman.co/redirect/workspace?type=personal&collectionTemplateId=e9c28f47-1253-44af-a2f3-20dce4da1f18&sourceTemplateId=ddb19591-3097-41cf-82af-c84273e56719)  \n[Authorization methods](https://go.postman.co/redirect/workspace?type=personal&collectionTemplateId=31a9a6ed-4cdf-4ced-984c-d12c9aec1c27&sourceTemplateId=ddb19591-3097-41cf-82af-c84273e56719)",
+    "description": "# 🚀 Get started here\n\nThis template guides you through CRUD operations (GET, POST, PUT, DELETE), variables, and tests.\n\n## 🔖 **How to use this template**\n\n#### **Step 1: Send requests**\n\nRESTful APIs allow you to perform CRUD operations using the POST, GET, PUT, and DELETE HTTP methods.\n\nThis collection contains each of these [request](https://learning.postman.com/docs/sending-requests/requests/) types. Open each request and click \"Send\" to see what happens.\n\n#### **Step 2: View responses**\n\nObserve the response tab for status code (200 OK), response time, and size.\n\n#### **Step 3: Send new Body data**\n\nUpdate or add new data in \"Body\" in the POST request. Typically, Body data is also used in PUT request.\n\n```\n{\n    \"name\": \"Add your name in the body\"\n}\n\n ```\n\n#### **Step 4: Update the variable**\n\nVariables enable you to store and reuse values in Postman. We have created a [variable](https://learning.postman.com/docs/sending-requests/variables/) called `base_url` with the sample request [https://postman-api-learner.glitch.me](https://postman-api-learner.glitch.me). Replace it with your API endpoint to customize this collection.\n\n#### **Step 5: Add tests in the \"Scripts\" tab**\n\nAdding tests to your requests can help you confirm that your API is working as expected. You can write test scripts in JavaScript and view the output in the \"Test Results\" tab.\n\n<img src=\"https://content.pstmn.io/fa30ea0a-373d-4545-a668-e7b283cca343/aW1hZ2UucG5n\" width=\"2162\" height=\"1530\">\n\n## 💪 Pro tips\n\n- Use folders to group related requests and organize the collection.\n    \n- Add more [scripts](https://learning.postman.com/docs/writing-scripts/intro-to-scripts/) to verify if the API works as expected and execute workflows.\n    \n\n## 💡Related templates\n\n[API testing basics](https://go.postman.co/redirect/workspace?type=personal&collectionTemplateId=e9a37a28-055b-49cd-8c7e-97494a21eb54&sourceTemplateId=ddb19591-3097-41cf-82af-c84273e56719)  \n[API documentation](https://go.postman.co/redirect/workspace?type=personal&collectionTemplateId=e9c28f47-1253-44af-a2f3-20dce4da1f18&sourceTemplateId=ddb19591-3097-41cf-82af-c84273e56719)  \n[Authorization methods](https://go.postman.co/redirect/workspace?type=personal&collectionTemplateId=31a9a6ed-4cdf-4ced-984c-d12c9aec1c27&sourceTemplateId=ddb19591-3097-41cf-82af-c84273e56719)",
     "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
   },
   "item": [
@@ -26,6 +26,18 @@
                 "packages": {},
                 "requests": {}
               }
+            },
+            {
+              "listen": "prerequest",
+              "script": {
+                "id": "a6b64bb6-5a15-46fb-99f1-f246bfe99831",
+                "exec": [
+                  ""
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
             }
           ],
           "id": "ee3bde75-bbe8-4e1f-ae1a-12866c146704",
@@ -42,15 +54,11 @@
               }
             },
             "url": {
-              "raw": "http://localhost:8000/api/v1/checks",
-              "protocol": "http",
+              "raw": "{{base_url}}/checks",
               "host": [
-                "localhost"
+                "{{base_url}}"
               ],
-              "port": "8000",
               "path": [
-                "api",
-                "v1",
                 "checks"
               ]
             },
@@ -62,33 +70,7 @@
       "id": "f689f1d9-feab-4b4f-8187-9eabd4ae8a46",
       "auth": {
         "type": "apikey"
-      },
-      "event": [
-        {
-          "listen": "prerequest",
-          "script": {
-            "id": "f2e48d53-51f6-47b9-a990-85a24b94abe4",
-            "type": "text/javascript",
-            "packages": {},
-            "requests": {},
-            "exec": [
-              ""
-            ]
-          }
-        },
-        {
-          "listen": "test",
-          "script": {
-            "id": "eb8a8e8f-b2e1-45fb-96a3-e10ed1c495c3",
-            "type": "text/javascript",
-            "packages": {},
-            "requests": {},
-            "exec": [
-              ""
-            ]
-          }
-        }
-      ]
+      }
     },
     {
       "name": "Incident",
@@ -99,13 +81,28 @@
             {
               "listen": "test",
               "script": {
-                "type": "text/javascript",
+                "id": "1a5ddede-23fe-4490-ae1e-6e25c9a8d889",
                 "exec": [
                   "pm.test(\"Successful POST request\", function () {",
                   "    pm.expect(pm.response.code).to.be.oneOf([200, 201]);",
                   "});",
                   ""
-                ]
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            },
+            {
+              "listen": "prerequest",
+              "script": {
+                "id": "47823816-9e43-4b7b-a315-9acf758911aa",
+                "exec": [
+                  ""
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
               }
             }
           ],
@@ -115,7 +112,7 @@
             "header": [],
             "body": {
               "mode": "raw",
-              "raw": "{\n\t\"name\": \"Add your name in the body\"\n}",
+              "raw": "{\n  \"latitude\": 55.7558,\n  \"longitude\": 37.6173,\n  \"radius\": 100\n}\n",
               "options": {
                 "raw": {
                   "language": "json"
@@ -123,12 +120,12 @@
               }
             },
             "url": {
-              "raw": "{{base_url}}/info",
+              "raw": "{{base_url}}/incidents",
               "host": [
                 "{{base_url}}"
               ],
               "path": [
-                "info"
+                "incidents"
               ]
             },
             "description": "This is a POST request, submitting data to an API via the request body. This request submits JSON data, and the data is reflected in the response.\n\nA successful POST request typically returns a `200 OK` or `201 Created` response code."
@@ -141,12 +138,27 @@
             {
               "listen": "test",
               "script": {
-                "type": "text/javascript",
+                "id": "baaa3c70-2873-4ed5-9cbd-24ee14bcf2fa",
                 "exec": [
                   "pm.test(\"Status code is 200\", function () {",
                   "    pm.response.to.have.status(200);",
                   "});"
-                ]
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            },
+            {
+              "listen": "prerequest",
+              "script": {
+                "id": "8232c6cc-e34b-4088-804c-a3e9636c3c49",
+                "exec": [
+                  ""
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
               }
             }
           ],
@@ -155,18 +167,13 @@
             "method": "GET",
             "header": [],
             "url": {
-              "raw": "{{base_url}}/info?id=1",
+              "raw": "{{base_url}}/incidents/20c68688-84fe-4c23-a1a1-22e0edac38b5",
               "host": [
                 "{{base_url}}"
               ],
               "path": [
-                "info"
-              ],
-              "query": [
-                {
-                  "key": "id",
-                  "value": "1"
-                }
+                "incidents",
+                "20c68688-84fe-4c23-a1a1-22e0edac38b5"
               ]
             },
             "description": "This is a GET request and it is used to \"get\" data from an endpoint. There is no request body for a GET request, but you can use query parameters to help specify the resource you want data on (e.g., in this request, we have `id=1`).\n\nA successful GET response will have a `200 OK` status, and should include some kind of response body - for example, HTML web content or JSON data."
@@ -179,12 +186,27 @@
             {
               "listen": "test",
               "script": {
-                "type": "text/javascript",
+                "id": "78b706f5-1b98-4d9b-9b14-0b4a7f04209e",
                 "exec": [
                   "pm.test(\"Status code is 200\", function () {",
                   "    pm.response.to.have.status(200);",
                   "});"
-                ]
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            },
+            {
+              "listen": "prerequest",
+              "script": {
+                "id": "559c5c9b-088b-4836-a5d4-cae1aa5d2ead",
+                "exec": [
+                  ""
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
               }
             }
           ],
@@ -193,18 +215,12 @@
             "method": "GET",
             "header": [],
             "url": {
-              "raw": "{{base_url}}/info?id=1",
+              "raw": "{{base_url}}/incidents",
               "host": [
                 "{{base_url}}"
               ],
               "path": [
-                "info"
-              ],
-              "query": [
-                {
-                  "key": "id",
-                  "value": "1"
-                }
+                "incidents"
               ]
             },
             "description": "This is a GET request and it is used to \"get\" data from an endpoint. There is no request body for a GET request, but you can use query parameters to help specify the resource you want data on (e.g., in this request, we have `id=1`).\n\nA successful GET response will have a `200 OK` status, and should include some kind of response body - for example, HTML web content or JSON data."
@@ -217,12 +233,27 @@
             {
               "listen": "test",
               "script": {
-                "type": "text/javascript",
+                "id": "230bff72-a20c-4495-872f-cf8a485609d4",
                 "exec": [
                   "pm.test(\"Status code is 200\", function () {",
                   "    pm.response.to.have.status(200);",
                   "});"
-                ]
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            },
+            {
+              "listen": "prerequest",
+              "script": {
+                "id": "48894768-9d0e-4c86-b98b-f825da1a4949",
+                "exec": [
+                  ""
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
               }
             }
           ],
@@ -231,17 +262,20 @@
             "method": "GET",
             "header": [],
             "url": {
-              "raw": "{{base_url}}/info?id=1",
+              "raw": "{{base_url}}/incidents/stats/8d82a464-9932-4da4-92f0-eb68e0fbb792?since=10",
               "host": [
                 "{{base_url}}"
               ],
               "path": [
-                "info"
+                "incidents",
+                "stats",
+                "8d82a464-9932-4da4-92f0-eb68e0fbb792"
               ],
               "query": [
                 {
-                  "key": "id",
-                  "value": "1"
+                  "key": "since",
+                  "value": "10",
+                  "uuid": "8b80b723-3d92-4d8a-bfa1-f22d08881c00"
                 }
               ]
             },
@@ -255,13 +289,28 @@
             {
               "listen": "test",
               "script": {
-                "type": "text/javascript",
+                "id": "30121103-53d5-4cbb-9188-bb9fbe71f43a",
                 "exec": [
                   "pm.test(\"Successful PUT request\", function () {",
                   "    pm.expect(pm.response.code).to.be.oneOf([200, 201, 204]);",
                   "});",
                   ""
-                ]
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            },
+            {
+              "listen": "prerequest",
+              "script": {
+                "id": "266dcc3f-cb56-4610-be7f-d79109cd2d42",
+                "exec": [
+                  ""
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
               }
             }
           ],
@@ -271,7 +320,7 @@
             "header": [],
             "body": {
               "mode": "raw",
-              "raw": "{\n\t\"name\": \"Add your name in the body\"\n}",
+              "raw": "{\n\t\"radius\": 50\n}",
               "options": {
                 "raw": {
                   "language": "json"
@@ -279,18 +328,13 @@
               }
             },
             "url": {
-              "raw": "{{base_url}}/info?id=1",
+              "raw": "{{base_url}}/incidents/8d82a464-9932-4da4-92f0-eb68e0fbb792",
               "host": [
                 "{{base_url}}"
               ],
               "path": [
-                "info"
-              ],
-              "query": [
-                {
-                  "key": "id",
-                  "value": "1"
-                }
+                "incidents",
+                "8d82a464-9932-4da4-92f0-eb68e0fbb792"
               ]
             },
             "description": "This is a PUT request and it is used to overwrite an existing piece of data. For instance, after you create an entity with a POST request, you may want to modify that later. You can do that using a PUT request. You typically identify the entity being updated by including an identifier in the URL (eg. `id=1`).\n\nA successful PUT request typically returns a `200 OK`, `201 Created`, or `204 No Content` response code."
@@ -303,13 +347,28 @@
             {
               "listen": "test",
               "script": {
-                "type": "text/javascript",
+                "id": "5b34ffee-4dc4-4408-a607-cc9c3612c540",
                 "exec": [
                   "pm.test(\"Successful DELETE request\", function () {",
                   "    pm.expect(pm.response.code).to.be.oneOf([200, 202, 204]);",
                   "});",
                   ""
-                ]
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            },
+            {
+              "listen": "prerequest",
+              "script": {
+                "id": "a0d47081-eaa0-47b9-a2e8-4380918335ef",
+                "exec": [
+                  ""
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
               }
             }
           ],
@@ -327,18 +386,13 @@
               }
             },
             "url": {
-              "raw": "{{base_url}}/info?id=1",
+              "raw": "{{base_url}}/incidents/8d82a464-9932-4da4-92f0-eb68e0fbb792",
               "host": [
                 "{{base_url}}"
               ],
               "path": [
-                "info"
-              ],
-              "query": [
-                {
-                  "key": "id",
-                  "value": "1"
-                }
+                "incidents",
+                "8d82a464-9932-4da4-92f0-eb68e0fbb792"
               ]
             },
             "description": "This is a DELETE request, and it is used to delete data that was previously created via a POST request. You typically identify the entity being updated by including an identifier in the URL (eg. `id=1`).\n\nA successful DELETE request typically returns a `200 OK`, `202 Accepted`, or `204 No Content` response code."
@@ -361,33 +415,7 @@
             "type": "string"
           }
         ]
-      },
-      "event": [
-        {
-          "listen": "prerequest",
-          "script": {
-            "id": "565ef6f7-ca93-40bf-8298-10ae52c3cd14",
-            "type": "text/javascript",
-            "packages": {},
-            "requests": {},
-            "exec": [
-              ""
-            ]
-          }
-        },
-        {
-          "listen": "test",
-          "script": {
-            "id": "0f450dd2-5290-46b0-8094-f32389ca990f",
-            "type": "text/javascript",
-            "packages": {},
-            "requests": {},
-            "exec": [
-              ""
-            ]
-          }
-        }
-      ]
+      }
     },
     {
       "name": "Operator",
@@ -498,76 +526,51 @@
             "type": "string"
           }
         ]
-      },
-      "event": [
-        {
-          "listen": "prerequest",
-          "script": {
-            "id": "68db5c0b-c22c-45f7-86df-f107c757de94",
-            "type": "text/javascript",
-            "packages": {},
-            "requests": {},
-            "exec": [
-              ""
-            ]
-          }
-        },
-        {
-          "listen": "test",
-          "script": {
-            "id": "c3afccb1-2c02-4266-8212-b28ef8443a64",
-            "type": "text/javascript",
-            "packages": {},
-            "requests": {},
-            "exec": [
-              ""
-            ]
-          }
-        }
-      ]
+      }
     },
     {
       "name": "Healthcheck",
       "id": "b28da4d9-945a-48ba-8b13-187b3e7c4059",
       "request": {
         "method": "GET",
-        "header": []
+        "header": [],
+        "url": {
+          "raw": "{{base_url}}/system/health",
+          "host": [
+            "{{base_url}}"
+          ],
+          "path": [
+            "system",
+            "health"
+          ]
+        }
       },
       "response": []
     }
   ],
-  "event": [
-    {
-      "listen": "prerequest",
-      "script": {
-        "id": "f43c471b-fd9f-460a-9c97-e94241d6056f",
-        "type": "text/javascript",
-        "requests": {},
-        "exec": [
-          ""
-        ]
+  "auth": {
+    "type": "apikey",
+    "apikey": [
+      {
+        "key": "value",
+        "value": "secret1",
+        "type": "string"
+      },
+      {
+        "key": "key",
+        "value": "X-API-Key",
+        "type": "string"
       }
-    },
-    {
-      "listen": "test",
-      "script": {
-        "id": "022ca470-e6d1-46f8-80f9-189f34486114",
-        "type": "text/javascript",
-        "requests": {},
-        "exec": [
-          ""
-        ]
-      }
-    }
-  ],
+    ]
+  },
   "variable": [
     {
-      "id": "45260847-322f-4d72-aa9c-440db8c89ad5",
+      "id": "d131e622-1d0b-445f-923c-1e10caf2653b",
       "key": "id",
       "value": "1"
     },
     {
-      "id": "4ec044d1-6421-415a-ba6d-2071e9d95d04",
+      "id": "bb9ec55a-b6aa-48d4-8522-e0a979d31ef7",
       "key": "base_url",
       "value": "https://template.postman-echo.com"
     }
